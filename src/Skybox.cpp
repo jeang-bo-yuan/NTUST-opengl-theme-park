@@ -13,12 +13,13 @@ Skybox::Skybox()
 void Skybox::draw()
 {
     glDepthMask(GL_FALSE);
-
     m_cubemap.bind_to(0);
     m_skybox_shader.Use();
-    m_vao.draw();
-    m_cubemap.unbind_from(0);
 
+    m_vao.draw();
+
+    m_cubemap.unbind_from(0);
+    glUseProgram(0);
     glDepthMask(GL_TRUE);
 }
 
