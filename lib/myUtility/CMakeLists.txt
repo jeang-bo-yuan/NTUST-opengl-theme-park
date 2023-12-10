@@ -4,6 +4,7 @@ add_library(my_utility STATIC
     ArcBall.cpp                 "include/ArcBall.h"
     Box_VAO.cpp                 "include/Box_VAO.h"
     DynamicHeightMap.cpp        "include/DynamicHeightMap.h"
+    Mesh.cpp                    "include/Mesh.h"
                                 "include/Plane_VAO.h"
     qtTextureCubeMap.cpp        "include/qtTextureCubeMap.h"
     qtTextureImage2D.cpp        "include/qtTextureImage2D.h"
