@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <QMouseEvent>
 
 // Ctor & Dtor ////////////////////////////////////////////////////////////////////
 
@@ -49,6 +50,11 @@ void ViewWidget::initializeGL()
         QMessageBox::critical(nullptr, "Failed", ex.what());
         exit(EXIT_FAILURE);
     }
+
+    /// start timer
+    m_timer.setInterval(20);
+    connect(&m_timer, &QTimer::timeout, this, QOverload<>::of(&ViewWidget::update));
+    m_timer.start();
 }
 
 void ViewWidget::resizeGL(int w, int h)
@@ -62,5 +68,32 @@ void ViewWidget::paintGL()
     m_matrices_UBO_p->bind_to(0);
 
     m_skybox_obj_p->draw();
+}
+
+// Mouse Event ////////////////////////////////////////////////////////////////////////
+
+void ViewWidget::mousePressEvent(QMouseEvent *e)
+{
+    m_old_arc_ball = m_arc_ball;
+    m_start_drag_point = e->pos();
+    this->setMouseTracking(true);
+}
+
+void ViewWidget::mouseMoveEvent(QMouseEvent *e)
+{
+    int delta_x = e->x() - m_start_drag_point.x();
+    int delta_y = e->y() - m_start_drag_point.y();
+
+    m_arc_ball.set_alpha(m_old_arc_ball.alpha() + glm::radians<float>(delta_x));
+    m_arc_ball.set_beta(m_old_arc_ball.beta() + glm::radians<float>(delta_y));
+
+    this->makeCurrent();
+    this->update_view_from_arc_ball();
+    this->doneCurrent();
+}
+
+void ViewWidget::mouseReleaseEvent(QMouseEvent *e)
+{
+    this->setMouseTracking(false);
 }
 

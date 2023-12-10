@@ -13,6 +13,7 @@
 
 #include <QOpenGLWidget>
 #include <QPoint>
+#include <QTimer>
 
 #include <memory>
 
@@ -38,6 +39,9 @@ private:
     /// skybox
     std::unique_ptr<Skybox> m_skybox_obj_p;
 
+    /// 每隔一段時間就updata一次
+    QTimer m_timer;
+
 public:
     explicit ViewWidget(QWidget* parent = nullptr);
     ~ViewWidget();
@@ -46,9 +50,19 @@ private:
     void update_view_from_arc_ball();
 
 protected:
+    /// initialize opengl things
     void initializeGL() override;
+    /// resize window then update perspective matrix
     void resizeGL(int w, int h) override;
+    /// paint opengl things
     void paintGL() override;
+
+    /// mouse press -> remember where it press
+    void mousePressEvent(QMouseEvent*) override;
+    /// move camera
+    void mouseMoveEvent(QMouseEvent*) override;
+    /// 關閉mouse tracking
+    void mouseReleaseEvent(QMouseEvent*) override;
 };
 
 #endif // VIEWWIDGET_H
