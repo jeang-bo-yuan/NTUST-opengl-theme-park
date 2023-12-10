@@ -7,6 +7,20 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 
+void GLAPIENTRY
+MessageCallback( GLenum source,
+                GLenum type,
+                GLuint id,
+                GLenum severity,
+                GLsizei length,
+                const GLchar* message,
+                const void* userParam )
+{
+    fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+            ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
+            type, severity, message );
+}
+
 // Ctor & Dtor ////////////////////////////////////////////////////////////////////
 
 ViewWidget::ViewWidget(QWidget *parent)
@@ -26,7 +40,10 @@ ViewWidget::~ViewWidget()
 
 void ViewWidget::update_view_from_arc_ball()
 {
-    m_matrices_UBO_p->BufferSubData(0, sizeof(glm::mat4), glm::value_ptr(m_arc_ball.view_matrix()));
+    glm::mat4 view_matrix = m_arc_ball.view_matrix();
+    m_matrices_UBO_p->BufferSubData(0, sizeof(glm::mat4), glm::value_ptr(view_matrix));
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixf(glm::value_ptr(view_matrix));
 }
 
 // OpenGL /////////////////////////////////////////////////////////////////////////
@@ -60,12 +77,17 @@ void ViewWidget::initializeGL()
 
 
     glEnable(GL_DEPTH_TEST);
+    // During init, enable debug output
+    glEnable              ( GL_DEBUG_OUTPUT );
+    glDebugMessageCallback( MessageCallback, 0 );
 }
 
 void ViewWidget::resizeGL(int w, int h)
 {
     m_proj_matrix = glm::perspective<float>(glm::radians(50.f), (float)w / h, 0.1f, 200.f);
     m_matrices_UBO_p->BufferSubData(sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(m_proj_matrix));
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(glm::value_ptr(m_proj_matrix));
 }
 
 void ViewWidget::paintGL()
@@ -75,6 +97,13 @@ void ViewWidget::paintGL()
     m_matrices_UBO_p->bind_to(0);
 
     m_skybox_obj_p->draw();
+
+    glBegin(GL_QUADS);
+    glVertex3i(-1, 0, -1);
+    glVertex3i(-1, 0, 1);
+    glVertex3i(1, 0, 1);
+    glVertex3i(1, 0, -1);
+    glEnd();
 }
 
 // Mouse Event ////////////////////////////////////////////////////////////////////////
