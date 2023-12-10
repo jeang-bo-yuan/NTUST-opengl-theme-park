@@ -63,6 +63,9 @@ protected:
     void mouseMoveEvent(QMouseEvent*) override;
     /// 關閉mouse tracking
     void mouseReleaseEvent(QMouseEvent*) override;
+
+    /// wheel scroll -> update distance
+    void wheelEvent(QWheelEvent*) override;
 };
 
 #endif // VIEWWIDGET_H

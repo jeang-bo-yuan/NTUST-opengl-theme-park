@@ -1,9 +1,11 @@
 
 #include "ViewWidget.h"
+#include "qdebug.h"
 #include <QMessageBox>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <QMouseEvent>
+#include <QWheelEvent>
 
 // Ctor & Dtor ////////////////////////////////////////////////////////////////////
 
@@ -55,6 +57,9 @@ void ViewWidget::initializeGL()
     m_timer.setInterval(20);
     connect(&m_timer, &QTimer::timeout, this, QOverload<>::of(&ViewWidget::update));
     m_timer.start();
+
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 void ViewWidget::resizeGL(int w, int h)
@@ -65,6 +70,8 @@ void ViewWidget::resizeGL(int w, int h)
 
 void ViewWidget::paintGL()
 {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     m_matrices_UBO_p->bind_to(0);
 
     m_skybox_obj_p->draw();
@@ -95,5 +102,23 @@ void ViewWidget::mouseMoveEvent(QMouseEvent *e)
 void ViewWidget::mouseReleaseEvent(QMouseEvent *e)
 {
     this->setMouseTracking(false);
+}
+
+// Wheel Event ////////////////////////////////////////////////////////////////////////
+
+void ViewWidget::wheelEvent(QWheelEvent *e)
+{
+    QPoint degree_move = e->angleDelta();
+    qDebug() << "Wheel is scrolled";
+
+    if (!degree_move.isNull()) {
+        m_arc_ball.set_r(m_arc_ball.r() + degree_move.y() / 120.f);
+    }
+
+    this->makeCurrent();
+    this->update_view_from_arc_ball();
+    this->doneCurrent();
+
+    qDebug() << "new r:" << m_arc_ball.r();
 }
 
