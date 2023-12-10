@@ -26,7 +26,17 @@ FetchContent_Declare(GLM
   URL "https://github.com/g-truc/glm/releases/download/0.9.9.8/glm-0.9.9.8.zip"
   DOWNLOAD_EXTRACT_TIMESTAMP ON
 )
+
+# fetch assimp
+FetchContent_Declare(ASSIMP
+  URL "https://github.com/assimp/assimp/archive/refs/tags/v5.3.1.zip"
+  DOWNLOAD_EXTRACT_TIMESTAMP ON
+)
+
+message("Fetching GLM Library...")
 FetchContent_MakeAvailable(GLM)
+message("Fetching ASSIMP Library...")
+FetchContent_MakeAvailable(ASSIMP)
 
 # lib directory
 add_subdirectory("lib/glad")
@@ -47,6 +57,8 @@ target_link_libraries(theme_park
     Qt${QT_MAJOR_VERSION}::Widgets
     Qt${QT_MAJOR_VERSION}::Gui
     glm::glm
+    assimp::assimp
+
     glad_glad
     my_utility
 )
@@ -58,7 +70,7 @@ target_link_libraries(theme_park
 # copy shader into binary dir
 add_custom_target(copy_shader
   COMMAND ${CMAKE_COMMAND} -E copy_directory "src/shader" ${CMAKE_CURRENT_BINARY_DIR}/shader
-  COMMENT "複製shader到可執行檔所在資料夾"
+  COMMENT "copy shader/ into binary directory"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   VERBATIM
 )
