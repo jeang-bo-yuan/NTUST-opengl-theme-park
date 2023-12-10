@@ -27,8 +27,8 @@ public:
      * @brief 建構子
      * @param center - 球心
      * @param r - 球的半徑，會被clamped到`[0.1, infinity)`間
-     * @param alpha - 從正x軸向正z軸旋轉的角度
-     * @param beta - 從正x軸向正y軸旋轉的角度，會被clamped到`[-pi/2, pi/2]`間
+     * @param alpha - 從正x軸向正z軸旋轉的角度（in radians）
+     * @param beta - 從正x軸向正y軸旋轉的角度（in radians），會被clamped到`[-pi/2, pi/2]`間
      */
     ArcBall(glm::vec3 center, float r, float alpha, float beta);
 
