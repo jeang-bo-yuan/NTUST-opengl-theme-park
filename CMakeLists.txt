@@ -49,7 +49,10 @@ file(GLOB_RECURSE SHADER_SOURCE RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" CONFIGURE
 
 add_executable(theme_park
     src/main.cpp
+    src/Skybox.h src/Skybox.cpp
+    src/ViewWidget.h src/ViewWidget.cpp
 
+    src/img/images.qrc
     ${SHADER_SOURCE}
 )
 
