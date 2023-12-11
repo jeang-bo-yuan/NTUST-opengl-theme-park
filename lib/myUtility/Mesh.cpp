@@ -4,9 +4,9 @@
 
 Mesh::Mesh(const std::vector<Vertex> &vertices,
            const std::vector<unsigned int> &indices,
-           std::vector<Texture> &&diffuse_textures,
-           std::vector<Texture> &&specular_textures)
-    : m_vertices(vertices), m_indices(indices), m_diffuse(std::move(diffuse_textures)), m_specular(std::move(specular_textures))
+           const std::vector<Texture> &diffuse_textures,
+           const std::vector<Texture> &specular_textures)
+    : m_vertices(vertices), m_indices(indices), m_diffuse(diffuse_textures), m_specular(specular_textures)
 {
     setupMesh();
 }
@@ -26,13 +26,13 @@ void Mesh::draw()
     // for "texture_diffuse1" to "texture_diffuse(i+1)"
     for (int i = 0; i < m_diffuse.size(); ++i) {
         // 綁定 texture_diffuse(i+1) 到 2 * ((i+1) - 1) 上
-        m_diffuse[i].bind_to(2 * i);
+        m_diffuse[i]->bind_to(2 * i);
     }
 
     // for "texture_specular1" to "texture_specular(i+1)"
     for (int i = 0; i < m_specular.size(); ++i) {
         // 綁定 texture_specular(i+1) 到 2 * ((i+1) - 1) + 1
-        m_specular[i].bind_to(2 * i + 1);
+        m_specular[i]->bind_to(2 * i + 1);
     }
 
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
@@ -71,7 +71,7 @@ void Mesh::setupMesh()
     // unbind
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_BINDING, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 

@@ -7,7 +7,7 @@ qtTextureImage2D::qtTextureImage2D(const QString &path)
 {
     QImage img(path);
     img.convertTo(QImage::Format_RGBA8888);
-    if (img.isNull()) throw std::invalid_argument("qtTextureImage2D: fail to open the image");
+    if (img.isNull()) throw std::invalid_argument(std::string("qtTextureImage2D: fail to open the image ").append(qPrintable(path)));
 
     glGenTextures(1, &m_texture_id);
     glBindTexture(GL_TEXTURE_2D, m_texture_id);

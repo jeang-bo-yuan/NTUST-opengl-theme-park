@@ -10,6 +10,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <map>
 
 
 /**
@@ -35,6 +36,7 @@ public:
     void draw();
 private:
     std::vector<Mesh> m_meshes; ///< 每個Mesh
+    std::map<std::string, Mesh::Texture> m_loaded_texture; ///!< 記錄已經載入的texture。key: file name，value: texture
     std::string m_directory;    ///< obj所在目錄（以"/"結尾），從這載入texture
 
     /// 從特定路徑載入模型

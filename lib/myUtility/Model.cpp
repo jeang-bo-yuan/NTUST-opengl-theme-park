@@ -2,6 +2,7 @@
 #include "Model.h"
 
 #include <stdexcept>
+#include <iostream>
 
 void Model::draw()
 {
@@ -95,7 +96,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         specular = loadMaterialTextures(material, aiTextureType_SPECULAR);
     }
 
-    return Mesh(vertices, indices, std::move(diffuse), std::move(specular));
+    return Mesh(vertices, indices, diffuse, specular);
 }
 
 std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type)
@@ -107,7 +108,24 @@ std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextur
         aiString texture_file;
         mat->GetTexture(type, i, &texture_file);
 
-        textures.emplace_back(m_directory.append(texture_file.C_Str()).c_str());
+        auto loaded_one = this->m_loaded_texture.find(texture_file.C_Str());
+
+        // 若還沒載入過
+        if (loaded_one == this->m_loaded_texture.end()) {
+            std::string texture_path(m_directory + texture_file.C_Str());
+
+            // 載入它
+            Mesh::Texture texture = std::make_shared<qtTextureImage2D>(texture_path.c_str());
+            std::cout << "Texture: " << texture_path << " is loaded." << std::endl;
+
+            m_loaded_texture.emplace(texture_file.C_Str(), texture); // 記在map
+            textures.push_back(texture); // 記在回傳的參數
+        }
+        // 已經載入過了
+        else {
+            std::cout << "Already load " << texture_file.C_Str() << std::endl;
+            textures.push_back(loaded_one->second);
+        }
     }
     return textures;
 }

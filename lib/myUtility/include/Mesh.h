@@ -7,6 +7,8 @@
 #include <glm/vec2.hpp>
 #include <vector>
 
+#include <memory>
+
 #include "qtTextureImage2D.h"
 
 /**
@@ -26,8 +28,8 @@ public:
         glm::vec2 aTexcoord;  ///< 材質座標
     };
 
-    /// 材質
-    typedef qtTextureImage2D Texture;
+    /// 材質，指向qtTextureImage2D的指標
+    typedef std::shared_ptr<qtTextureImage2D> Texture;
 
 public:
     /**
@@ -36,11 +38,12 @@ public:
      * @param indices - 繪製順序（三角型）
      * @param diffuse_textures - diffuse貼圖
      * @param specular_textures - specular貼圖
+     * @note Mesh 物件以 std::shared_ptr 來共享 texture
      */
     Mesh(const std::vector<Vertex>& vertices,
          const std::vector<unsigned int>& indices,
-         std::vector<Texture>&& diffuse_textures,
-         std::vector<Texture>&& specular_textures);
+         const std::vector<Texture>& diffuse_textures,
+         const std::vector<Texture>& specular_textures);
 
     Mesh(const Mesh&) = delete;
 
