@@ -47,7 +47,12 @@ public:
 
     Mesh(const Mesh&) = delete;
 
-    Mesh(Mesh&&) = default;
+    /// move constructor, rvalue will become useless (VAO = 0)
+    Mesh(Mesh&& rvalue)
+        : m_VAO(std::exchange(rvalue.m_VAO, 0)), m_VBO(std::exchange(rvalue.m_VBO, 0)), m_EBO(std::exchange(rvalue.m_EBO, 0))
+    {
+
+    }
 
     /// 呼叫 glDeleteVertexArrays 和 glDeleteBuffers
     ~Mesh();

@@ -1,5 +1,6 @@
 
 #include "Mesh.h"
+#include <iostream>
 #include <stddef.h>
 
 Mesh::Mesh(const std::vector<Vertex> &vertices,
@@ -13,9 +14,12 @@ Mesh::Mesh(const std::vector<Vertex> &vertices,
 
 Mesh::~Mesh()
 {
-    glDeleteVertexArrays(1, &m_VAO);
-    glDeleteBuffers(1, &m_VBO);
-    glDeleteBuffers(1, &m_EBO);
+    if (m_VAO != 0) {
+        std::cout << "A Mesh is deleted" << std::endl;
+        glDeleteVertexArrays(1, &m_VAO);
+        glDeleteBuffers(1, &m_VBO);
+        glDeleteBuffers(1, &m_EBO);
+    }
 }
 
 void Mesh::draw()

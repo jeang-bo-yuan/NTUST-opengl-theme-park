@@ -39,7 +39,7 @@ void Model::processNode(aiNode *node, const aiScene *scene)
     for(unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        m_meshes.emplace_back(processMesh(mesh, scene));
+        m_meshes.emplace_back(std::move(processMesh(mesh, scene)));
     }
     // then do the same for each of its children
     for(unsigned int i = 0; i < node->mNumChildren; i++)
