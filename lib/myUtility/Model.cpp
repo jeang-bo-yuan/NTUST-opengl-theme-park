@@ -116,7 +116,6 @@ std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextur
 
             // 載入它
             Mesh::Texture texture = std::make_shared<qtTextureImage2D>(texture_path.c_str());
-            std::cout << "Texture: " << texture_path << " is loaded." << std::endl;
 
             m_loaded_texture.emplace(texture_file.C_Str(), texture); // 記在map
             textures.push_back(texture); // 記在回傳的參數
