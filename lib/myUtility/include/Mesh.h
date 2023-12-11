@@ -7,6 +7,8 @@
 #include <glm/vec2.hpp>
 #include <vector>
 
+#include "qtTextureImage2D.h"
+
 /// 用來表示模型中的一部分
 class Mesh {
 public:
@@ -18,9 +20,7 @@ public:
     };
 
     /// 材質
-    struct Texture {
-        GLuint name;
-    };
+    typedef qtTextureImage2D Texture;
 
 public:
     /**
@@ -30,10 +30,14 @@ public:
      * @param diffuse_textures - diffuse貼圖
      * @param specular_textures - specular貼圖
      */
-    Mesh(const std::vector<Vertex> vertices,
-         const std::vector<unsigned int> indices,
-         const std::vector<Texture> diffuse_textures,
-         const std::vector<Texture> specular_textures);
+    Mesh(const std::vector<Vertex>& vertices,
+         const std::vector<unsigned int>& indices,
+         std::vector<Texture>&& diffuse_textures,
+         std::vector<Texture>&& specular_textures);
+
+    Mesh(const Mesh&) = delete;
+
+    Mesh(Mesh&&) = default;
 
     /// 綁定貼圖並呼叫glDrawElements
     void draw();
