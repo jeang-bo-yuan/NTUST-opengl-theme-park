@@ -12,6 +12,14 @@ Mesh::Mesh(const std::vector<Vertex> &vertices,
     setupMesh();
 }
 
+Mesh::Mesh(Mesh &&rvalue)
+    : m_vertices(std::move(rvalue.m_vertices)), m_indices(std::move(rvalue.m_indices)),
+    m_diffuse(std::move(rvalue.m_diffuse)), m_specular(std::move(rvalue.m_specular)),
+    m_VAO(std::exchange(rvalue.m_VAO, 0)), m_VBO(std::exchange(rvalue.m_VBO, 0)), m_EBO(std::exchange(rvalue.m_EBO, 0))
+{
+
+}
+
 Mesh::~Mesh()
 {
     if (m_VAO != 0) {

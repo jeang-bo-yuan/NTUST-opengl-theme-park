@@ -123,7 +123,7 @@ std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextur
         }
         // 已經載入過了
         else {
-            std::cout << "Already load " << texture_file.C_Str() << std::endl;
+//            std::cout << "Already load " << texture_file.C_Str() << std::endl;
             textures.push_back(loaded_one->second);
         }
     }
