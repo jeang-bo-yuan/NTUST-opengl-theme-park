@@ -9,6 +9,7 @@
 #include <DynamicHeightMap.h>
 #include <Shader.h>
 #include <Wave_VAO.h>
+#include <glm/vec3.hpp>
 
 /// water
 class Water
@@ -29,8 +30,20 @@ public:
     ///
     Water();
 
-    ///
-    void draw();
+    /// 畫出來
+    /// @param wireframe - 水面是否用wireframe
+    void draw(bool wireframe);
+
+    /// @brief 處理點擊事件
+    /// @details 只有當|world_pos.xz| <= 5 && |world_pos.y| <= 1 才 add_drop
+    /// @note 要makeCurrent
+    /// @param world_pos - 點擊的世界座標
+    /// @return true, if it is processed
+    bool process_click(glm::vec3 world_pos);
+
+    void use_sine_wave() { m_state = SINE_WAVE; }
+    void use_ripple() { m_state = RIPPLE; }
+    void use_height_map() { m_state = HEIGHT_MAP; }
 };
 
 #endif // WATER_H

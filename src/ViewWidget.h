@@ -56,12 +56,18 @@ private:
     std::unique_ptr<Shader> m_model_shader_p;
     std::unique_ptr<Model> m_back_pack_p;
 
+    /// 是否繪製wireframe
+    bool m_wireframe_mode;
+
 public:
     explicit ViewWidget(QWidget* parent = nullptr);
     ~ViewWidget();
 
 private:
     void update_view_from_arc_ball();
+
+    /// 點在視窗的winPos，並對每個物件處理點擊事件
+    void process_click_for_obj(QPoint winPos);
 
 protected:
     /// initialize opengl things
@@ -80,6 +86,16 @@ protected:
 
     /// wheel scroll -> update distance
     void wheelEvent(QWheelEvent*) override;
+
+
+public slots:
+    void use_sine_wave() { m_water_obj_p->use_sine_wave(); }
+
+    void use_ripple() { m_water_obj_p->use_ripple(); }
+
+    void use_height_map() { m_water_obj_p->use_height_map(); }
+
+    void toggle_wireframe(bool on);
 };
 
 #endif // VIEWWIDGET_H

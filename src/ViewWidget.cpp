@@ -26,7 +26,7 @@ MessageCallback( GLenum source,
 ViewWidget::ViewWidget(QWidget *parent)
     : QOpenGLWidget(parent),
     m_arc_ball(glm::vec3(0, 0, 0), 10, glm::radians(45.f), glm::radians(20.f)),
-    m_old_arc_ball(m_arc_ball), m_start_drag_point()
+    m_old_arc_ball(m_arc_ball), m_start_drag_point(), m_wireframe_mode(false)
 {
 
 }
@@ -46,6 +46,21 @@ void ViewWidget::update_view_from_arc_ball()
     glLoadMatrixf(glm::value_ptr(view_matrix));
 
     m_light_UBO_p->BufferSubData(0, sizeof(glm::vec4), glm::value_ptr(m_arc_ball.calc_pos()));
+}
+
+void ViewWidget::process_click_for_obj(QPoint winPos)
+{
+    // Qt的y是從上往下算，OpenGL是從下往上算
+    glm::vec3 winPos3D(winPos.x(), this->height() - winPos.y(), 0);
+    glReadPixels(winPos3D.x, winPos3D.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winPos3D.z);
+
+    glm::mat4 view_matrix = m_arc_ball.view_matrix();
+    glm::vec4 viewport(0, 0, this->width(), this->height());
+    glm::vec3 pos = glm::unProject(winPos3D, view_matrix, m_proj_matrix, viewport);
+
+    std::cout << "Clicked on (" << pos.x << ", " << pos.y << ", " << pos.z << ')' << std::endl;
+
+    m_water_obj_p->process_click(pos);
 }
 
 // OpenGL /////////////////////////////////////////////////////////////////////////
@@ -116,10 +131,12 @@ void ViewWidget::paintGL()
     m_light_UBO_p->bind_to(1);
 
     m_skybox_obj_p->draw();
-    m_water_obj_p->draw();
+    m_water_obj_p->draw(m_wireframe_mode);
 
     m_model_shader_p->Use();
+    glPolygonMode(GL_FRONT_AND_BACK, m_wireframe_mode ? GL_LINE : GL_FILL);
     m_back_pack_p->draw();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 //    glBegin(GL_QUADS);
 //    glVertex3i(-1, 0, -1);
@@ -133,21 +150,36 @@ void ViewWidget::paintGL()
 
 void ViewWidget::mousePressEvent(QMouseEvent *e)
 {
-    m_old_arc_ball = m_arc_ball;
-    m_start_drag_point = e->pos();
+    if (e->buttons() & Qt::RightButton) {
+        m_old_arc_ball = m_arc_ball;
+        m_start_drag_point = e->pos();
+    }
+    else {
+        this->makeCurrent();
+        this->process_click_for_obj(e->pos());
+        this->doneCurrent();
+    }
+
     this->setMouseTracking(true);
 }
 
 void ViewWidget::mouseMoveEvent(QMouseEvent *e)
 {
-    int delta_x = e->x() - m_start_drag_point.x();
-    int delta_y = e->y() - m_start_drag_point.y();
-
-    m_arc_ball.set_alpha(m_old_arc_ball.alpha() + glm::radians<float>(delta_x));
-    m_arc_ball.set_beta(m_old_arc_ball.beta() + glm::radians<float>(delta_y));
-
     this->makeCurrent();
-    this->update_view_from_arc_ball();
+
+    if (e->buttons() & Qt::RightButton) {
+        int delta_x = e->x() - m_start_drag_point.x();
+        int delta_y = e->y() - m_start_drag_point.y();
+
+        m_arc_ball.set_alpha(m_old_arc_ball.alpha() + glm::radians<float>(delta_x));
+        m_arc_ball.set_beta(m_old_arc_ball.beta() + glm::radians<float>(delta_y));
+
+        this->update_view_from_arc_ball();
+    }
+    else {
+        process_click_for_obj(e->pos());
+    }
+
     this->doneCurrent();
 }
 
@@ -172,5 +204,11 @@ void ViewWidget::wheelEvent(QWheelEvent *e)
     this->doneCurrent();
 
     qDebug() << "new r:" << m_arc_ball.r();
+}
+
+// Slots //////////////////////////////////////////////////////////////////////////////
+
+void ViewWidget::toggle_wireframe(bool on) {
+    m_wireframe_mode = on;
 }
 
