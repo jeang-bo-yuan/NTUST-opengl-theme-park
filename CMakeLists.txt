@@ -28,6 +28,14 @@ FetchContent_Declare(GLM
 )
 
 # fetch assimp
+OPTION ( ASSIMP_BUILD_TESTS
+  "If the test suite for Assimp is built in addition to the library."
+  OFF
+)
+OPTION( ASSIMP_INSTALL
+  "Disable this if you want to use assimp as a submodule."
+  OFF
+)
 FetchContent_Declare(ASSIMP
   URL "https://github.com/assimp/assimp/archive/refs/tags/v5.3.1.zip"
   DOWNLOAD_EXTRACT_TIMESTAMP ON
@@ -78,5 +86,14 @@ add_custom_target(copy_shader
   VERBATIM
 )
 add_dependencies(theme_park copy_shader)
+
+# copy asset into binary dir
+add_custom_target(copy_asset
+  COMMAND ${CMAKE_COMMAND} -E copy_directory "asset/" "${CMAKE_CURRENT_BINARY_DIR}/asset"
+  COMMENT "copy asset/ into binary directory"
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  VERBATIM
+)
+add_dependencies(theme_park copy_asset)
 
 

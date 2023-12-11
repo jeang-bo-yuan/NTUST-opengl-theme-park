@@ -64,6 +64,11 @@ void ViewWidget::initializeGL()
     /// @todo initialize drawable object
     try {
         m_skybox_obj_p = std::make_unique<Skybox>();
+        m_back_pack_p = std::make_unique<Model>("asset/model/backpack/backpack.obj");
+
+        m_model_shader_p = std::make_unique<Shader>("shader/model.vert", nullptr, nullptr, nullptr, "shader/model.frag");
+        m_model_shader_p->Use();
+        glUniform1i(glGetUniformLocation(m_model_shader_p->Program, "diffuse1"), 0);
     }
     catch (std::exception& ex) {
         QMessageBox::critical(nullptr, "Failed", ex.what());
@@ -80,6 +85,13 @@ void ViewWidget::initializeGL()
     // During init, enable debug output
     glEnable              ( GL_DEBUG_OUTPUT );
     glDebugMessageCallback( MessageCallback, 0 );
+
+
+    // unbind everything
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void ViewWidget::resizeGL(int w, int h)
@@ -98,12 +110,15 @@ void ViewWidget::paintGL()
 
     m_skybox_obj_p->draw();
 
-    glBegin(GL_QUADS);
-    glVertex3i(-1, 0, -1);
-    glVertex3i(-1, 0, 1);
-    glVertex3i(1, 0, 1);
-    glVertex3i(1, 0, -1);
-    glEnd();
+    m_model_shader_p->Use();
+    m_back_pack_p->draw();
+
+//    glBegin(GL_QUADS);
+//    glVertex3i(-1, 0, -1);
+//    glVertex3i(-1, 0, 1);
+//    glVertex3i(1, 0, 1);
+//    glVertex3i(1, 0, -1);
+//    glEnd();
 }
 
 // Mouse Event ////////////////////////////////////////////////////////////////////////

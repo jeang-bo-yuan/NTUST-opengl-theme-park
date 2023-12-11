@@ -10,6 +10,8 @@
 #include <qtTextureCubeMap.h>
 #include <UBO.h>
 #include <Box_VAO.h>
+#include <Shader.h>
+#include <Model.h>
 
 #include <QOpenGLWidget>
 #include <QPoint>
@@ -41,6 +43,11 @@ private:
 
     /// 每隔一段時間就updata一次
     QTimer m_timer;
+
+
+
+    std::unique_ptr<Shader> m_model_shader_p;
+    std::unique_ptr<Model> m_back_pack_p;
 
 public:
     explicit ViewWidget(QWidget* parent = nullptr);
