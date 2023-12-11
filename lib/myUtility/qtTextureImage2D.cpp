@@ -38,7 +38,7 @@ qtTextureImage2D::~qtTextureImage2D()
 
 void qtTextureImage2D::bind_to(GLuint sampler)
 {
-    qDebug() << "bind" << m_texture_id << "at" << sampler;
+//    qDebug() << "bind" << m_texture_id << "at" << sampler;
     glActiveTexture(GL_TEXTURE0 + sampler);
     glBindTexture(GL_TEXTURE_2D, m_texture_id);
 }
