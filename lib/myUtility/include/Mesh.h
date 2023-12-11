@@ -9,14 +9,21 @@
 
 #include "qtTextureImage2D.h"
 
-/// 用來表示模型中的一部分
+/**
+ * @brief 用來表示模型中的一部分
+ * @details
+ * # 提供的 Attribute
+ * - (location = 0) Vertex::aPosition
+ * - (location = 1) Vertex::aTexcoord
+ * - (location = 2) Vertex::aNormal
+ */
 class Mesh {
 public:
     /// 頂點資訊
     struct Vertex {
-        glm::vec3 aPosition;
-        glm::vec3 aNormal;
-        glm::vec2 aTexcoord;
+        glm::vec3 aPosition;  ///< 位置
+        glm::vec3 aNormal;    ///< 法向量
+        glm::vec2 aTexcoord;  ///< 材質座標
     };
 
     /// 材質

@@ -5,6 +5,7 @@ add_library(my_utility STATIC
     Box_VAO.cpp                 "include/Box_VAO.h"
     DynamicHeightMap.cpp        "include/DynamicHeightMap.h"
     Mesh.cpp                    "include/Mesh.h"
+    Model.cpp                   "include/Model.h"
                                 "include/Plane_VAO.h"
     qtTextureCubeMap.cpp        "include/qtTextureCubeMap.h"
     qtTextureImage2D.cpp        "include/qtTextureImage2D.h"
@@ -18,6 +19,7 @@ target_include_directories(my_utility PUBLIC include)
 target_link_libraries(my_utility
   Qt${QT_MAJOR_VERSION}::Gui
   glm::glm
+  assimp::assimp
   glad_glad
 )
 
