@@ -10,21 +10,26 @@
 #include <Shader.h>
 #include <Wave_VAO.h>
 #include <glm/vec3.hpp>
+#include <vector>
+#include <qtTextureImage2D.h>
 
 /// water
 class Water
 {
 private:
-    Shader m_water_shader;
-    Wave_VAO m_water_vao;
-    DynamicHeightMap m_ripple_map;
-    GLuint m_frame;
+    Shader m_water_shader;  //!< 繪製水波的shader
+    Wave_VAO m_water_vao;   //!< VAO
+    DynamicHeightMap m_ripple_map; //!<
+    GLuint m_frame;  //!<
+
+    std::vector<qtTextureImage2D> m_height_maps;
+    size_t m_current_height_map;
 
     enum {
         SINE_WAVE = 0,
         RIPPLE = 1,
         HEIGHT_MAP = 2
-    } m_state;
+    } m_state; //!<
 
 public:
     ///
