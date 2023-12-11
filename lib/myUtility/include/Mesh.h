@@ -46,6 +46,9 @@ public:
 
     Mesh(Mesh&&) = default;
 
+    /// 呼叫 glDeleteVertexArrays 和 glDeleteBuffers
+    ~Mesh();
+
     /// 綁定貼圖並呼叫glDrawElements
     void draw();
 
