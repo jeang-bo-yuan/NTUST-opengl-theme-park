@@ -19,7 +19,7 @@ void main() {
     vec2 TexCoord = clamp((vec2(pos.x , pos.z) + WAVE_SIZE) / (2.f * WAVE_SIZE), 0, 1);
 
     vec4 info = texture2D(height_map, TexCoord);
-    vs_world_pos = vec3(pos.x, (info.r * 0.5), pos.z);
+    vs_world_pos = vec3(pos.x, (info.r * 0.5) - 0.5, pos.z);
     gl_Position = Matrices.proj * Matrices.view * vec4(vs_world_pos, 1);
 
     // TexCoord上x加0.0001後，y的變化量
