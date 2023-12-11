@@ -44,6 +44,8 @@ void ViewWidget::update_view_from_arc_ball()
     m_matrices_UBO_p->BufferSubData(0, sizeof(glm::mat4), glm::value_ptr(view_matrix));
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(glm::value_ptr(view_matrix));
+
+    m_light_UBO_p->BufferSubData(0, sizeof(glm::vec4), glm::value_ptr(m_arc_ball.calc_pos()));
 }
 
 // OpenGL /////////////////////////////////////////////////////////////////////////
@@ -59,11 +61,14 @@ void ViewWidget::initializeGL()
 
     /// @todo load UBO
     m_matrices_UBO_p = std::make_unique<UBO>(2 * sizeof(glm::mat4), GL_DYNAMIC_DRAW);
+    m_light_UBO_p = std::make_unique<UBO>(2 * sizeof(glm::vec4), GL_DYNAMIC_DRAW);
+    m_light_UBO_p->BufferSubData(sizeof(glm::vec4), sizeof(glm::vec4), glm::value_ptr(glm::vec4(0, 1, 0, 1)));
     this->update_view_from_arc_ball();
 
     /// @todo initialize drawable object
     try {
         m_skybox_obj_p = std::make_unique<Skybox>();
+        m_water_obj_p = std::make_unique<Water>();
         m_back_pack_p = std::make_unique<Model>("asset/model/backpack/backpack.obj");
 
         m_model_shader_p = std::make_unique<Shader>("shader/model.vert", nullptr, nullptr, nullptr, "shader/model.frag");
@@ -106,9 +111,12 @@ void ViewWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // bind UBO
     m_matrices_UBO_p->bind_to(0);
+    m_light_UBO_p->bind_to(1);
 
     m_skybox_obj_p->draw();
+    m_water_obj_p->draw();
 
     m_model_shader_p->Use();
     m_back_pack_p->draw();

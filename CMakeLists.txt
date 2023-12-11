@@ -59,6 +59,7 @@ add_executable(theme_park
     src/main.cpp
     src/Skybox.h src/Skybox.cpp
     src/ViewWidget.h src/ViewWidget.cpp
+    src/Water.h src/Water.cpp
 
     src/img/images.qrc
     ${SHADER_SOURCE}

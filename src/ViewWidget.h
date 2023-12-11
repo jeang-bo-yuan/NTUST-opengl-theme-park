@@ -20,6 +20,7 @@
 #include <memory>
 
 #include "Skybox.h"
+#include "Water.h"
 
 class ViewWidget : public QOpenGLWidget
 {
@@ -38,8 +39,14 @@ private:
     glm::mat4 m_proj_matrix;
     std::unique_ptr<UBO> m_matrices_UBO_p;
 
+    /// light UBO
+    std::unique_ptr<UBO> m_light_UBO_p;
+
     /// skybox
     std::unique_ptr<Skybox> m_skybox_obj_p;
+
+    // water
+    std::unique_ptr<Water> m_water_obj_p;
 
     /// 每隔一段時間就updata一次
     QTimer m_timer;
