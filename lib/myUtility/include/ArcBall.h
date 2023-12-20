@@ -14,8 +14,8 @@
  * # 參數的意義
  * - center: 球心的位置
  * - r: 球的半徑，介於`[0.1, infinity)`間
- * - alpha: 方位角，`0`為正x軸，`pi/2`為正z軸
- * - beta: 仰角，介於`[-pi/2, pi/2]`間
+ * - alpha: 方位角（in radians），`0`為正x軸，`pi/2`為正z軸
+ * - beta: 仰角（in radians），介於`[-pi/2, pi/2]`間
  *
  * # 座標系
  * x向右、y向上、z射出紙面（OpenGL慣用的座標系）
@@ -44,6 +44,18 @@ public:
      * @return View Matrix
      */
     glm::mat4 view_matrix() const;
+
+    /**
+     * @brief 依據方位角（alpha），計算面向哪
+     * @return 一個單位向量，其中y = 0
+     */
+    glm::vec3 face_dir() const;
+
+    /**
+     * @brief 依據方位角（alpha），計算右邊在哪
+     * @return 一個單位向量，其中y = 0
+     */
+    glm::vec3 right_dir() const;
 
 public:
     /**

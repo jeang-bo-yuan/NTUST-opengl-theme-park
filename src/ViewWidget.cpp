@@ -237,8 +237,28 @@ void ViewWidget::keyPressEvent(QKeyEvent *e)
     switch(e->key()) {
     case Qt::Key_Space:
         m_arc_ball.set_center(e->modifiers() == Qt::ShiftModifier ?
-                              m_arc_ball.center() - glm::vec3(0, 0.05, 0) :
-                              m_arc_ball.center() + glm::vec3(0, 0.05, 0));
+                              m_arc_ball.center() - glm::vec3(0, 0.05f, 0) :  // 有按shift則往下
+                              m_arc_ball.center() + glm::vec3(0, 0.05f, 0));  // 否則，往上
+        this->update_view_from_arc_ball();
+        break;
+
+    case Qt::Key_W:  // go forward
+        m_arc_ball.set_center(m_arc_ball.center() + m_arc_ball.face_dir() * 0.05f);
+        this->update_view_from_arc_ball();
+        break;
+
+    case Qt::Key_S:  // go backward
+        m_arc_ball.set_center(m_arc_ball.center() - m_arc_ball.face_dir() * 0.05f);
+        this->update_view_from_arc_ball();
+        break;
+
+    case Qt::Key_D:  // go right
+        m_arc_ball.set_center(m_arc_ball.center() + m_arc_ball.right_dir() * 0.05f);
+        this->update_view_from_arc_ball();
+        break;
+
+    case Qt::Key_A:  // go left
+        m_arc_ball.set_center(m_arc_ball.center() - m_arc_ball.right_dir() * 0.05f);
         this->update_view_from_arc_ball();
         break;
     }

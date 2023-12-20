@@ -31,3 +31,21 @@ glm::mat4 ArcBall::view_matrix() const
     return glm::lookAt(eye, m_center, up);
 }
 
+glm::vec3 ArcBall::face_dir() const
+{
+    return glm::vec3(
+        -cos(m_alpha),
+        0,
+        -sin(m_alpha)
+    );
+}
+
+glm::vec3 ArcBall::right_dir() const
+{
+    return glm::vec3(
+        sin(m_alpha),
+        0,
+        -cos(m_alpha)
+    );
+}
+
