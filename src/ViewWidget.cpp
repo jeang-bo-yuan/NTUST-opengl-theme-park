@@ -84,6 +84,7 @@ void ViewWidget::initializeGL()
     try {
         m_skybox_obj_p = std::make_unique<Skybox>();
         m_water_obj_p = std::make_unique<Water>();
+        m_train_obj_p = std::make_unique<TrainSystem>();
         m_back_pack_p = std::make_unique<Model>("asset/model/backpack/backpack.obj");
 
         m_model_shader_p = std::make_unique<Shader>("shader/model.vert", nullptr, nullptr, nullptr, "shader/model.frag");
@@ -94,6 +95,17 @@ void ViewWidget::initializeGL()
         QMessageBox::critical(nullptr, "Failed", ex.what());
         exit(EXIT_FAILURE);
     }
+
+    /// @todo Light
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    GLfloat lightPosition1[] = {0,1,5,0};
+    GLfloat whiteLight[]	 = {1.0f, 1.0f, 1.0f, 1.0};
+    GLfloat grayLight[]	     = {0.5f, 0.5f, 0.5f, 1.0};
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition1);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, grayLight);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, whiteLight);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, whiteLight);
 
     /// start timer
     m_timer.setInterval(20);
@@ -132,6 +144,7 @@ void ViewWidget::paintGL()
 
     m_skybox_obj_p->draw(m_wireframe_mode);
     m_water_obj_p->draw(m_wireframe_mode);
+    m_train_obj_p->draw(m_wireframe_mode);
 
     m_model_shader_p->Use();
     glPolygonMode(GL_FRONT_AND_BACK, m_wireframe_mode ? GL_LINE : GL_FILL);
@@ -193,7 +206,6 @@ void ViewWidget::mouseReleaseEvent(QMouseEvent *e)
 void ViewWidget::wheelEvent(QWheelEvent *e)
 {
     QPoint degree_move = e->angleDelta();
-    qDebug() << "Wheel is scrolled";
 
     if (!degree_move.isNull()) {
         m_arc_ball.set_r(m_arc_ball.r() + degree_move.y() / 120.f);
@@ -202,8 +214,6 @@ void ViewWidget::wheelEvent(QWheelEvent *e)
     this->makeCurrent();
     this->update_view_from_arc_ball();
     this->doneCurrent();
-
-    qDebug() << "new r:" << m_arc_ball.r();
 }
 
 // Slots //////////////////////////////////////////////////////////////////////////////

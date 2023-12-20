@@ -60,6 +60,7 @@ add_executable(theme_park
     src/MainWindow.h src/MainWindow.cpp src/MainWindow.ui
     src/ProgressWidget.h src/ProgressWidget.cpp
     src/Skybox.h src/Skybox.cpp
+    src/TrainSystem.h src/TrainSystem.cpp
     src/ViewWidget.h src/ViewWidget.cpp
     src/Water.h src/Water.cpp
 

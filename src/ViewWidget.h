@@ -20,6 +20,7 @@
 #include <memory>
 
 #include "Skybox.h"
+#include "TrainSystem.h"
 #include "Water.h"
 
 class ViewWidget : public QOpenGLWidget
@@ -47,6 +48,9 @@ private:
 
     // water
     std::unique_ptr<Water> m_water_obj_p;
+
+    // train
+    std::unique_ptr<TrainSystem> m_train_obj_p;
 
     /// 每隔一段時間就updata一次
     QTimer m_timer;
