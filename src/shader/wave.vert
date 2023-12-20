@@ -22,13 +22,16 @@ void main() {
     vs_world_pos = vec3(pos.x, (info.r * 0.5) - 0.5, pos.z);
     gl_Position = Matrices.proj * Matrices.view * vec4(vs_world_pos, 1);
 
-    // TexCoord上x加0.0001後，y的變化量
-    float dy_x = (texture2D(height_map, TexCoord + vec2(0.0001, 0)) - info).r;
-    // TexCoord上z加0.0001後，y的變化量
-    float dy_z = (texture2D(height_map, TexCoord + vec2(0, 0.0001)) - info).r;
+    float delta = 0.00005;
+    // TexCoord上x加delta後，y的變化量
+    float dy_x = (texture2D(height_map, TexCoord + vec2(delta, 0)) - info).r;
+    dy_x *= 0.5;
+    // TexCoord上z加delta後，y的變化量
+    float dy_z = (texture2D(height_map, TexCoord + vec2(0, delta)) - info).r;
+    dy_z *= 0.5;
 
     vs_normal = normalize(
-      cross(vec3(0, dy_z, 0.0001), vec3(0.0001, dy_x, 0))
+      cross(vec3(0, dy_z, delta), vec3(delta, dy_x, 0))
     );
   }
   else {
