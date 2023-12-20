@@ -239,6 +239,10 @@ void ViewWidget::keyPressEvent(QKeyEvent *e)
     this->makeCurrent();
 
     switch(e->key()) {
+    case Qt::Key_Delete:
+        m_train_obj_p->delete_CP();
+        break;
+
     case Qt::Key_Shift:
         m_train_obj_p->toggle_vertical_move(true);
         break;

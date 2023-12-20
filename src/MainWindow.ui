@@ -157,7 +157,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>刪除</string>
+              <string>刪除(delete)</string>
              </property>
             </widget>
            </item>
