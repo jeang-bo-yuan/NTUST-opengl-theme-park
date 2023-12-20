@@ -36,11 +36,29 @@ bool TrainSystem::process_drag(glm::vec3 eye, glm::vec3 pos)
     if (m_selected_control_point < 0 || m_selected_control_point >= m_control_points.size())
         return false;
 
-    /// 將選中的 control point 拖移到 eye 和 pos 的連線上的某點。
-    /// 那個點的y座標和原本的y座標一樣
-    float K = (m_control_points[m_selected_control_point].pos.y - eye.y) / (pos.y - eye.y);
-    glm::vec3 new_cp_pos = eye + K * (pos - eye);
-    m_control_points[m_selected_control_point].pos = new_cp_pos;
+    if (m_is_vertical_move) {
+        /// 若是鉛直移動。
+        /// 計算 eye 和 pos 直線上的一點P，其中P.x 和原來 control point 的x座標一樣。
+        /// 然後將control point的y座標設成P.y。
+        float K;
+
+        if (std::abs(eye.x - pos.x) < 1)
+            /// 但如果 eye 和 pos 的x幾乎一樣，則計算P時改要求P.z 和原來 control point 的z座標一樣
+            K = (m_control_points[m_selected_control_point].pos.z - eye.z) / (pos.z - eye.z);
+        else
+            K = (m_control_points[m_selected_control_point].pos.x - eye.x) / (pos.x - eye.x);
+
+        // P = eye + K * (pos - eye)
+        m_control_points[m_selected_control_point].pos.y = eye.y + K * (pos.y - eye.y);
+    }
+    else {
+        /// 否則，是水平移動。
+        /// 將選中的 control point 拖移到 eye 和 pos 的連線上的某點。
+        /// 那個點的y座標和原本的y座標一樣。
+        float K = (m_control_points[m_selected_control_point].pos.y - eye.y) / (pos.y - eye.y);
+        glm::vec3 new_cp_pos = eye + K * (pos - eye);
+        m_control_points[m_selected_control_point].pos = new_cp_pos;
+    }
 
     return true;
 }
@@ -50,7 +68,7 @@ TrainSystem::TrainSystem()
                        {glm::vec3(0, 2, 1), glm::vec3(0, 1, 0)},
                        {glm::vec3(-1, 2, 0), glm::vec3(0, 1, 0)},
                        {glm::vec3(0, 2, -1), glm::vec3(0, 1, 0)}},
-    m_selected_control_point(-1)
+    m_selected_control_point(-1), m_is_vertical_move(false)
 {
 
 }

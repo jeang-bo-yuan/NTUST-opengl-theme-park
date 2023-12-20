@@ -15,6 +15,7 @@ class TrainSystem
 private:
     std::vector<ControlPoint> m_control_points;
     int m_selected_control_point;
+    bool m_is_vertical_move; ///< 是否鉛直移動 control point
 
 public:
     /// @brief 處理點擊，並選擇控制點
@@ -29,6 +30,12 @@ public:
      * @return 是否處理拖移事件
      */
     bool process_drag(glm::vec3 eye, glm::vec3 pos);
+
+    /**
+     * @brief 開關「鉛直移動」
+     * @param on - true->開啟；false->關閉
+     */
+    void toggle_vertical_move(bool on) { m_is_vertical_move = on; }
 
 public:
     TrainSystem();

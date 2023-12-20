@@ -95,6 +95,8 @@ protected:
 
     /// 按下鍵盤按鍵
     void keyPressEvent(QKeyEvent*) override;
+    /// 釋放鍵盤按鍵
+    void keyReleaseEvent(QKeyEvent* e) override;
 
 
 public slots:

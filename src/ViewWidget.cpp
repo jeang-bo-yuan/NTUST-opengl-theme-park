@@ -237,7 +237,11 @@ void ViewWidget::keyPressEvent(QKeyEvent *e)
     this->makeCurrent();
 
     switch(e->key()) {
-    case Qt::Key_Space:
+    case Qt::Key_Shift:
+        m_train_obj_p->toggle_vertical_move(true);
+        break;
+
+    case Qt::Key_Space:  // up or down
         m_arc_ball.set_center(e->modifiers() == Qt::ShiftModifier ?
                               m_arc_ball.center() - glm::vec3(0, 0.05f, 0) :  // 有按shift則往下
                               m_arc_ball.center() + glm::vec3(0, 0.05f, 0));  // 否則，往上
@@ -262,6 +266,19 @@ void ViewWidget::keyPressEvent(QKeyEvent *e)
     case Qt::Key_A:  // go left
         m_arc_ball.set_center(m_arc_ball.center() - m_arc_ball.right_dir() * 0.05f);
         this->update_view_from_arc_ball();
+        break;
+    }
+
+    this->doneCurrent();
+}
+
+void ViewWidget::keyReleaseEvent(QKeyEvent *e)
+{
+    this->makeCurrent();
+
+    switch(e->key()) {
+    case Qt::Key_Shift:
+        m_train_obj_p->toggle_vertical_move(false);
         break;
     }
 
