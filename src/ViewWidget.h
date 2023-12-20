@@ -81,6 +81,7 @@ protected:
     /// paint opengl things
     void paintGL() override;
 
+
     /// mouse press -> remember where it press
     void mousePressEvent(QMouseEvent*) override;
     /// move camera
@@ -90,6 +91,10 @@ protected:
 
     /// wheel scroll -> update distance
     void wheelEvent(QWheelEvent*) override;
+
+
+    /// 按下鍵盤按鍵
+    void keyPressEvent(QKeyEvent*) override;
 
 
 public slots:

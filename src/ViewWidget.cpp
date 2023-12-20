@@ -1,6 +1,7 @@
 
 #include "ViewWidget.h"
-#include "qdebug.h"
+#include <QDebug>
+#include <QKeyEvent>
 #include <QMessageBox>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -28,7 +29,7 @@ ViewWidget::ViewWidget(QWidget *parent)
     m_arc_ball(glm::vec3(0, 0, 0), 10, glm::radians(45.f), glm::radians(20.f)),
     m_old_arc_ball(m_arc_ball), m_start_drag_point(), m_wireframe_mode(false)
 {
-
+    this->setFocusPolicy(Qt::StrongFocus);
 }
 
 ViewWidget::~ViewWidget()
@@ -224,6 +225,24 @@ void ViewWidget::wheelEvent(QWheelEvent *e)
 
     this->makeCurrent();
     this->update_view_from_arc_ball();
+    this->doneCurrent();
+}
+
+// Key Event //////////////////////////////////////////////////////////////////////////
+
+void ViewWidget::keyPressEvent(QKeyEvent *e)
+{
+    this->makeCurrent();
+
+    switch(e->key()) {
+    case Qt::Key_Space:
+        m_arc_ball.set_center(e->modifiers() == Qt::ShiftModifier ?
+                              m_arc_ball.center() - glm::vec3(0, 0.05, 0) :
+                              m_arc_ball.center() + glm::vec3(0, 0.05, 0));
+        this->update_view_from_arc_ball();
+        break;
+    }
+
     this->doneCurrent();
 }
 
