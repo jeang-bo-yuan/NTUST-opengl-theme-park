@@ -22,6 +22,8 @@ void TrainSystem::draw(bool wireframe)
 void TrainSystem::draw_control_points()
 {
     glUseProgram(0);
+    glMatrixMode(GL_MODELVIEW);
+
     for (size_t i = 0; i < m_control_points.size(); ++i) {
         const glm::vec3& pos = m_control_points[i].pos;
         const glm::vec3& orient = m_control_points[i].orient;
