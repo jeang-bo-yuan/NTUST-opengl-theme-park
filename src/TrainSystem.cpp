@@ -7,9 +7,11 @@
 #include <cmath>
 
 /// Control Point的大小
-constexpr float CONTROL_POINT_SIZE = 0.1;
+constexpr float CONTROL_POINT_SIZE = 0.1f;
 /// 大小的斜邊
 constexpr float HYPOT_CP_SIZE = 1.41421f /*sqrt(2)*/ * CONTROL_POINT_SIZE;
+
+// Mouse Event //////////////////////////////////////////////////////////////////
 
 bool TrainSystem::process_click(glm::vec3 pos)
 {
@@ -24,10 +26,12 @@ bool TrainSystem::process_click(glm::vec3 pos)
             m_selected_control_point = i;
             std::cout << "Select Control Point: " << m_selected_control_point << std::endl;
 
+            emit is_point_selected(true);
             return true;
         }
     }
 
+    emit is_point_selected(false);
     return false;
 }
 
@@ -63,6 +67,42 @@ bool TrainSystem::process_drag(glm::vec3 eye, glm::vec3 pos)
     return true;
 }
 
+// Control Point ///////////////////////////////////////////////////////////////////////////////
+
+void TrainSystem::add_CP()
+{
+    /// 若沒有選中control point，則加在最後面
+    if (m_selected_control_point < 0 || m_selected_control_point >= m_control_points.size()) {
+        glm::vec3 new_pos = 0.5f * (m_control_points.front().pos + m_control_points.back().pos);
+
+        m_control_points.emplace_back(ControlPoint{new_pos, glm::vec3(0, 1, 0)});
+    }
+    /// 否則加在選中的那個之後
+    else {
+        ControlPoint new_cp;
+        int selected = m_selected_control_point, next = this->next_CP(selected);
+        new_cp.pos = 0.5f * (m_control_points[selected].pos + m_control_points[next].pos);
+        new_cp.orient = glm::vec3(0, 1, 0);
+
+        m_control_points.insert(m_control_points.begin() + selected + 1, new_cp);
+    }
+}
+
+void TrainSystem::delete_CP()
+{
+    if (m_selected_control_point < 0 || m_selected_control_point >= m_control_points.size())
+        return;
+
+    if (m_control_points.size() == 1) return;
+
+    m_control_points.erase(m_control_points.begin() + m_selected_control_point);
+
+    m_selected_control_point = -1;
+    emit is_point_selected(false);
+}
+
+// Ctor /////////////////////////////////////////////////////////////////////////////////////////
+
 TrainSystem::TrainSystem()
     : m_control_points{{glm::vec3(1, 2, 0), glm::vec3(0, 1, 0)},
                        {glm::vec3(0, 2, 1), glm::vec3(0, 1, 0)},
@@ -72,6 +112,8 @@ TrainSystem::TrainSystem()
 {
 
 }
+
+// Draw //////////////////////////////////////////////////////////////////////////////////////////
 
 void TrainSystem::draw(bool wireframe)
 {

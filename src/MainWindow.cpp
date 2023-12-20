@@ -13,6 +13,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->radioRipple, &QRadioButton::clicked, ui->view, &ViewWidget::use_ripple);
     connect(ui->radioHeightMap, &QRadioButton::clicked, ui->view, &ViewWidget::use_height_map);
 
+    // Train
+    ui->buttonDeleteCP->setDisabled(true);
+    connect(ui->view, &ViewWidget::is_point_selected, ui->buttonDeleteCP, &QPushButton::setEnabled);
+    connect(ui->buttonAddCP, &QPushButton::clicked, ui->view, &ViewWidget::add_train_CP);
+    connect(ui->buttonDeleteCP, &QPushButton::clicked, ui->view, &ViewWidget::delete_train_CP);
+
     // Misc
     connect(ui->checkBoxWireframe, &QCheckBox::toggled, ui->view, &ViewWidget::toggle_wireframe);
 }

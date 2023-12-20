@@ -93,7 +93,9 @@ void ViewWidget::initializeGL()
     try {
         m_skybox_obj_p = std::make_unique<Skybox>();
         m_water_obj_p = std::make_unique<Water>();
+
         m_train_obj_p = std::make_unique<TrainSystem>();
+        connect(m_train_obj_p.get(), &TrainSystem::is_point_selected, this, &ViewWidget::is_point_selected);
 
         std::cout << "Loading Model..." << std::endl;
         m_back_pack_p = std::make_unique<Model>("asset/model/backpack/backpack.obj");
