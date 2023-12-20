@@ -22,7 +22,7 @@ public:
     Skybox();
 
     /// 繪製skybox
-    void draw();
+    void draw(bool wireframe);
 
     /// 取得cubemap texture的參考
     qtTextureCubeMap& cubemap() { return m_cubemap; }

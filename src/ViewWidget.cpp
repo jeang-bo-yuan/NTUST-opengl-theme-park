@@ -130,7 +130,7 @@ void ViewWidget::paintGL()
     m_matrices_UBO_p->bind_to(0);
     m_light_UBO_p->bind_to(1);
 
-    m_skybox_obj_p->draw();
+    m_skybox_obj_p->draw(m_wireframe_mode);
     m_water_obj_p->draw(m_wireframe_mode);
 
     m_model_shader_p->Use();

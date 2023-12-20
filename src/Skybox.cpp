@@ -10,13 +10,15 @@ Skybox::Skybox()
     glUniform1i(glGetUniformLocation(m_skybox_shader.Program, "skybox"), 0);
 }
 
-void Skybox::draw()
+void Skybox::draw(bool wireframe)
 {
     glDepthMask(GL_FALSE);
     m_cubemap.bind_to(0);
     m_skybox_shader.Use();
 
+    glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
     m_vao.draw();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     m_cubemap.unbind_from(0);
     glUseProgram(0);
