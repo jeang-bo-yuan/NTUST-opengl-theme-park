@@ -3,7 +3,6 @@
 #include <cmath>
 #include <glm/vec2.hpp>
 #include <iostream>
-#include "ProgressWidget.h"
 
 Water::Water()
     : m_water_shader("shader/wave.vert", nullptr, nullptr, nullptr, "shader/wave.frag"), m_water_vao(5), m_frame(0), m_height_maps(),
@@ -15,16 +14,11 @@ Water::Water()
     glUniform1f(glGetUniformLocation(m_water_shader.Program, "WAVE_SIZE"), 5.f);
     glUniform1i(glGetUniformLocation(m_water_shader.Program, "use_height_map"), false);
 
-    // 進度條
-    ProgressWidget* progress = new ProgressWidget(nullptr, u8"載入height map中...", 0, 200);
-    progress->show();
-
     // 載入200張height map
     QString path_pattern(":/height_maps/%1.png");
     char num[4] = "000";
     for (int i = 0; i < 200; ++i) {
         m_height_maps.emplace_back(path_pattern.arg(QString(num)));
-        progress->progress_advance();
 
         // num += 1
         for (int digit = 2; digit >= 0; --digit) {
@@ -37,9 +31,6 @@ Water::Water()
             }
         }
     }
-
-    progress->hide();
-    progress->deleteLater();
 }
 
 void Water::draw(bool wireframe)

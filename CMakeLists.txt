@@ -58,7 +58,6 @@ file(GLOB_RECURSE SHADER_SOURCE RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" CONFIGURE
 add_executable(theme_park
     src/main.cpp
     src/MainWindow.h src/MainWindow.cpp src/MainWindow.ui
-    src/ProgressWidget.h src/ProgressWidget.cpp
     src/Skybox.h src/Skybox.cpp
     src/TrainSystem.h src/TrainSystem.cpp
     src/ViewWidget.h src/ViewWidget.cpp

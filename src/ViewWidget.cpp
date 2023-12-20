@@ -85,6 +85,8 @@ void ViewWidget::initializeGL()
         m_skybox_obj_p = std::make_unique<Skybox>();
         m_water_obj_p = std::make_unique<Water>();
         m_train_obj_p = std::make_unique<TrainSystem>();
+
+        std::cout << "Loading Model..." << std::endl;
         m_back_pack_p = std::make_unique<Model>("asset/model/backpack/backpack.obj");
 
         m_model_shader_p = std::make_unique<Shader>("shader/model.vert", nullptr, nullptr, nullptr, "shader/model.frag");
