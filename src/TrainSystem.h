@@ -17,10 +17,18 @@ private:
     int m_selected_control_point;
 
 public:
-    /// 處理點擊，並選擇控制點
+    /// @brief 處理點擊，並選擇控制點
     /// @param pos - 世界座標
     /// @return 是否處理點擊事件
     bool process_click(glm::vec3 pos);
+
+    /**
+     * @brief 處理拖移
+     * @param eye - 眼睛的位置
+     * @param pos - 點的位置
+     * @return 是否處理拖移事件
+     */
+    bool process_drag(glm::vec3 eye, glm::vec3 pos);
 
 public:
     TrainSystem();

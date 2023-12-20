@@ -61,12 +61,14 @@ void ViewWidget::process_click_for_obj(QPoint winPos, bool is_drag)
     glm::vec3 pos = glm::unProject(winPos3D, view_matrix, m_proj_matrix, viewport);
 
     if (is_drag) {
-        m_water_obj_p->process_click(pos);
+        m_train_obj_p->process_drag(m_arc_ball.calc_pos(), pos) ||
+            m_water_obj_p->process_click(pos);
     }
     else {
         std::cout << "Clicked on (" << pos.x << ", " << pos.y << ", " << pos.z << ')' << std::endl;
 
-        m_train_obj_p->process_click(pos) || m_water_obj_p->process_click(pos);
+        m_train_obj_p->process_click(pos) ||
+            m_water_obj_p->process_click(pos);
     }
 }
 

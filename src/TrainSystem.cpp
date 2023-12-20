@@ -31,6 +31,20 @@ bool TrainSystem::process_click(glm::vec3 pos)
     return false;
 }
 
+bool TrainSystem::process_drag(glm::vec3 eye, glm::vec3 pos)
+{
+    if (m_selected_control_point < 0 || m_selected_control_point >= m_control_points.size())
+        return false;
+
+    /// 將選中的 control point 拖移到 eye 和 pos 的連線上的某點。
+    /// 那個點的y座標和原本的y座標一樣
+    float K = (m_control_points[m_selected_control_point].pos.y - eye.y) / (pos.y - eye.y);
+    glm::vec3 new_cp_pos = eye + K * (pos - eye);
+    m_control_points[m_selected_control_point].pos = new_cp_pos;
+
+    return true;
+}
+
 TrainSystem::TrainSystem()
     : m_control_points{{glm::vec3(1, 2, 0), glm::vec3(0, 1, 0)},
                        {glm::vec3(0, 2, 1), glm::vec3(0, 1, 0)},
