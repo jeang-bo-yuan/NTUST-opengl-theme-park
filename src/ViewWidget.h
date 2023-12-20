@@ -71,7 +71,7 @@ private:
     void update_view_from_arc_ball();
 
     /// 點在視窗的winPos，並對每個物件處理點擊事件
-    void process_click_for_obj(QPoint winPos);
+    void process_click_for_obj(QPoint winPos, bool is_drag);
 
 protected:
     /// initialize opengl things

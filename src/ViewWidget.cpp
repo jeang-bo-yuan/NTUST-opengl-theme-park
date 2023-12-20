@@ -48,7 +48,7 @@ void ViewWidget::update_view_from_arc_ball()
     m_light_UBO_p->BufferSubData(0, sizeof(glm::vec4), glm::value_ptr(m_arc_ball.calc_pos()));
 }
 
-void ViewWidget::process_click_for_obj(QPoint winPos)
+void ViewWidget::process_click_for_obj(QPoint winPos, bool is_drag)
 {
     // Qt的y是從上往下算，OpenGL是從下往上算
     glm::vec3 winPos3D(winPos.x(), this->height() - winPos.y(), 0);
@@ -56,11 +56,17 @@ void ViewWidget::process_click_for_obj(QPoint winPos)
 
     glm::mat4 view_matrix = m_arc_ball.view_matrix();
     glm::vec4 viewport(0, 0, this->width(), this->height());
+    // 計算點在世界座標的哪裡
     glm::vec3 pos = glm::unProject(winPos3D, view_matrix, m_proj_matrix, viewport);
 
-    std::cout << "Clicked on (" << pos.x << ", " << pos.y << ", " << pos.z << ')' << std::endl;
+    if (is_drag) {
+        m_water_obj_p->process_click(pos);
+    }
+    else {
+        std::cout << "Clicked on (" << pos.x << ", " << pos.y << ", " << pos.z << ')' << std::endl;
 
-    m_water_obj_p->process_click(pos);
+        m_train_obj_p->process_click(pos) || m_water_obj_p->process_click(pos);
+    }
 }
 
 // OpenGL /////////////////////////////////////////////////////////////////////////
@@ -99,6 +105,7 @@ void ViewWidget::initializeGL()
     }
 
     /// @todo Light
+    glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     GLfloat lightPosition1[] = {0,1,5,0};
@@ -153,6 +160,8 @@ void ViewWidget::paintGL()
     m_back_pack_p->draw();
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+//    glUseProgram(0);
+//    glColor3ub(255, 0, 0);
 //    glBegin(GL_QUADS);
 //    glVertex3i(-1, 0, -1);
 //    glVertex3i(-1, 0, 1);
@@ -171,7 +180,7 @@ void ViewWidget::mousePressEvent(QMouseEvent *e)
     }
     else {
         this->makeCurrent();
-        this->process_click_for_obj(e->pos());
+        this->process_click_for_obj(e->pos(), false);
         this->doneCurrent();
     }
 
@@ -192,7 +201,7 @@ void ViewWidget::mouseMoveEvent(QMouseEvent *e)
         this->update_view_from_arc_ball();
     }
     else {
-        process_click_for_obj(e->pos());
+        process_click_for_obj(e->pos(), true);
     }
 
     this->doneCurrent();
