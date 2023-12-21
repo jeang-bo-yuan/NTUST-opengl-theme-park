@@ -119,7 +119,7 @@ void TrainSystem::orient_of_selected_CP(float &alpha, float &beta) const
 
     const ControlPoint& point = m_control_points[m_selected_control_point];
     beta = std::asin(point.orient.y);
-    if (point.orient.x == 0 && point.orient.z == 0)
+    if (std::fabs(point.orient.x) < 0.001 && std::fabs(point.orient.z) < 0.001)
         alpha = 0.f;
     else
         alpha = std::atan2(point.orient.z, point.orient.x);
