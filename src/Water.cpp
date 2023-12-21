@@ -70,7 +70,6 @@ bool Water::process_click(glm::vec3 world_pos)
         glm::vec2 tex(world_pos.x, world_pos.z);
         tex = (tex + 5.f) / 10.f;
 
-        std::cout << "Add drop: " << tex.x << ' ' << tex.y << std::endl;
         m_ripple_map.add_drop(tex.x, tex.y);
 
         return true;
