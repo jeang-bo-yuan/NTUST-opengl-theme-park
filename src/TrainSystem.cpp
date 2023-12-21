@@ -76,6 +76,8 @@ void TrainSystem::add_CP()
         glm::vec3 new_pos = 0.5f * (m_control_points.front().pos + m_control_points.back().pos);
 
         m_control_points.emplace_back(ControlPoint{new_pos, glm::vec3(0, 1, 0)});
+
+        emit is_point_selected(false);
     }
     /// 否則加在選中的那個之後
     else {
@@ -85,6 +87,8 @@ void TrainSystem::add_CP()
         new_cp.orient = glm::vec3(0, 1, 0);
 
         m_control_points.insert(m_control_points.begin() + selected + 1, new_cp);
+
+        emit is_point_selected(true);
     }
 }
 
@@ -93,7 +97,7 @@ void TrainSystem::delete_CP()
     if (m_selected_control_point < 0 || m_selected_control_point >= m_control_points.size())
         return;
 
-    if (m_control_points.size() == 1) return;
+    if (m_control_points.size() <= 4) return;
 
     m_control_points.erase(m_control_points.begin() + m_selected_control_point);
 

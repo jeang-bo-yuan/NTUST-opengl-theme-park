@@ -46,12 +46,13 @@ public:
 
     /**
      * @brief 新增一個control point
+     * @post 看原本有沒有控制點被選中，並emit is_point_selected()
      */
     void add_CP();
 
     /**
      * @brief 刪除被選中的control point
-     * @note control point至少會留一個，所以只剩一個的時候無論如何都不會被刪
+     * @note control point至少會留**4**個，所以只剩4個的時候無論如何都不會被刪
      * @post 若成功刪除，emit is_point_selected(false)
      */
     void delete_CP();
@@ -66,6 +67,9 @@ public:
 
 public:
     TrainSystem();
+
+    /// 取得控制點的個數
+    int get_cp_num() const { return m_control_points.size(); }
 
     /// 畫出來
     /// @param wireframe - 是否是wireframe

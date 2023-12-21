@@ -67,6 +67,9 @@ public:
     explicit ViewWidget(QWidget* parent = nullptr);
     ~ViewWidget();
 
+    /// 取得火車的控制點個數
+    int get_train_cp_num() const { return m_train_obj_p->get_cp_num(); }
+
 private:
     void update_view_from_arc_ball();
 

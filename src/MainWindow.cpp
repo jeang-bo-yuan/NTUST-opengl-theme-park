@@ -15,7 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Train
     ui->buttonDeleteCP->setDisabled(true);
-    connect(ui->view, &ViewWidget::is_point_selected, ui->buttonDeleteCP, &QPushButton::setEnabled);
+    connect(ui->view, &ViewWidget::is_point_selected, this, [this](bool selected) {
+        // 有控制點被選中，且原本的控制點超過4個，則啟用刪除鍵
+        this->ui->buttonDeleteCP->setEnabled(selected && this->ui->view->get_train_cp_num() > 4);
+    });
     connect(ui->buttonAddCP, &QPushButton::clicked, ui->view, &ViewWidget::add_train_CP);
     connect(ui->buttonDeleteCP, &QPushButton::clicked, ui->view, &ViewWidget::delete_train_CP);
 
