@@ -25,6 +25,9 @@ private:
     int prev_CP(int old) { return (old <= 0 ? static_cast<int>(m_control_points.size()) - 1
                                             : (old - 1) % m_control_points.size()); }
 
+    /// 若沒有選中控制點，回傳true；否則回傳false
+    bool nothing_is_selected() const { return m_selected_control_point < 0 || m_selected_control_point >= m_control_points.size(); }
+
 public:
     /// @name Edit Control Point
     /// @brief 下列function都可能會改變control point的位置
@@ -56,6 +59,24 @@ public:
      * @post 若成功刪除，則選中後一個控制點，並emit is_point_selected(true)；否則，啥都不做
      */
     void delete_CP();
+
+    /**
+     * @brief 取得選中的control point的orient
+     * @details 回傳兩個值alpha, beta。以`r=1`, `center=(0,0,0)`, `alpha=alpha`, `beta=beta`代入ArcBall後可算出實際的orient。
+     * @param[out] alpha - 方位角(in radians)
+     * @param[out] beta - 仰角(in radians)
+     * @post 若沒有control point被選中，alpha, beta的值為NAN
+     */
+    void orient_of_selected_CP(float& alpha, float& beta) const;
+
+    /**
+     * @brief 替被選中的control point設定orient
+     * @details 以`r=1`, `center=(0,0,0)`, `alpha=alpha`, `beta=beta`代入ArcBall後算出實際的orient。
+     * @param alpha - 方位角(in radians)
+     * @param beta - 仰角(in radians)
+     * @post 若沒有選中control point，則什麼都不會做
+     */
+    void set_orient_for_selected_CP(float alpha, float beta);
 
     /// @}
 

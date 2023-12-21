@@ -3,8 +3,10 @@
 #include <glad/gl.h>
 #include <glm/trigonometric.hpp>
 #include <glm/geometric.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <cmath>
+#include <ArcBall.h>
 
 /// Control Point的大小
 constexpr float CONTROL_POINT_SIZE = 0.1f;
@@ -37,7 +39,7 @@ bool TrainSystem::process_click(glm::vec3 pos)
 
 bool TrainSystem::process_drag(glm::vec3 eye, glm::vec3 pos)
 {
-    if (m_selected_control_point < 0 || m_selected_control_point >= m_control_points.size())
+    if (nothing_is_selected())
         return false;
 
     if (m_is_vertical_move) {
@@ -72,7 +74,7 @@ bool TrainSystem::process_drag(glm::vec3 eye, glm::vec3 pos)
 void TrainSystem::add_CP()
 {
     /// 若沒有選中control point，則加在最後面
-    if (m_selected_control_point < 0 || m_selected_control_point >= m_control_points.size()) {
+    if (nothing_is_selected()) {
         glm::vec3 new_pos = 0.5f * (m_control_points.front().pos + m_control_points.back().pos);
 
         m_control_points.emplace_back(ControlPoint{new_pos, glm::vec3(0, 1, 0)});
@@ -94,7 +96,7 @@ void TrainSystem::add_CP()
 
 void TrainSystem::delete_CP()
 {
-    if (m_selected_control_point < 0 || m_selected_control_point >= m_control_points.size())
+    if (nothing_is_selected())
         return;
 
     if (m_control_points.size() <= 4) return;
@@ -105,6 +107,31 @@ void TrainSystem::delete_CP()
     // 所以m_selected_control_point不用加1就已經指到原本的後一項
     m_selected_control_point %= m_control_points.size();
     emit is_point_selected(true);
+}
+
+void TrainSystem::orient_of_selected_CP(float &alpha, float &beta) const
+{
+    if (nothing_is_selected()) {
+        alpha = NAN;
+        beta = NAN;
+        return;
+    }
+
+    const ControlPoint& point = m_control_points[m_selected_control_point];
+    beta = std::asin(point.orient.y);
+    if (point.orient.x == 0 && point.orient.z == 0)
+        alpha = 0.f;
+    else
+        alpha = std::atan2(point.orient.z, point.orient.x);
+}
+
+void TrainSystem::set_orient_for_selected_CP(float alpha, float beta)
+{
+    if (nothing_is_selected())
+        return;
+
+    ArcBall ball(glm::vec3(0, 0, 0), 1.f, alpha, beta);
+    m_control_points[m_selected_control_point].orient = ball.calc_pos();
 }
 
 // Ctor /////////////////////////////////////////////////////////////////////////////////////////

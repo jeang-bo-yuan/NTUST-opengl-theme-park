@@ -15,12 +15,27 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Train
     ui->buttonDeleteCP->setDisabled(true);
+    ui->sliderAlpha->setDisabled(true);
+    ui->sliderBeta->setDisabled(true);
     connect(ui->view, &ViewWidget::is_point_selected, this, [this](bool selected) {
+        ui->sliderAlpha->setEnabled(selected);
+        ui->sliderBeta->setEnabled(selected);
+        ui->buttonDeleteCP->setEnabled(selected);
+
+        if (!selected) return;
+
         // 有控制點被選中，且原本的控制點超過4個，則啟用刪除鍵
-        this->ui->buttonDeleteCP->setEnabled(selected && this->ui->view->get_train_cp_num() > 4);
+        ui->buttonDeleteCP->setEnabled(ui->view->get_train().get_cp_num() > 4);
+
+        float alpha, beta;
+        ui->view->get_train().orient_of_selected_CP(alpha, beta);
+        ui->sliderAlpha->setValue(glm::degrees(alpha));
+        ui->sliderBeta->setValue(glm::degrees(beta));
     });
     connect(ui->buttonAddCP, &QPushButton::clicked, ui->view, &ViewWidget::add_train_CP);
     connect(ui->buttonDeleteCP, &QPushButton::clicked, ui->view, &ViewWidget::delete_train_CP);
+    connect(ui->sliderAlpha, &QSlider::valueChanged, this, &MainWindow::update_orient_for_cp);
+    connect(ui->sliderBeta, &QSlider::valueChanged, this, &MainWindow::update_orient_for_cp);
 
     // Misc
     connect(ui->checkBoxWireframe, &QCheckBox::toggled, ui->view, &ViewWidget::toggle_wireframe);
@@ -29,4 +44,11 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::update_orient_for_cp()
+{
+    float alpha = glm::radians<float>(ui->sliderAlpha->value());
+    float beta = glm::radians<float>(ui->sliderBeta->value());
+    ui->view->get_train().set_orient_for_selected_CP(alpha, beta);
 }

@@ -17,6 +17,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+private slots:
+    void update_orient_for_cp();
 };
 
 #endif // MAINWINDOW_H
