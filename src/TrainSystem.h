@@ -5,12 +5,22 @@
 #include <glm/vec3.hpp>
 #include <vector>
 #include <QObject>
+#include "ParamEquation.h"
 
+/// 控制點
 struct ControlPoint {
     glm::vec3 pos;
     glm::vec3 orient;
 };
 
+/// 火車用的軌道樣式
+enum class SplineType {
+    LINEAR,   ///< 直線
+    CARDINAL, ///< cardinal
+    CUBIC_B   ///< cubic B spline
+};
+
+/// 火車
 class TrainSystem : public QObject
 {
     Q_OBJECT
@@ -18,12 +28,16 @@ class TrainSystem : public QObject
 private:
     std::vector<ControlPoint> m_control_points;
     int m_selected_control_point;
+
+    SplineType m_line_type;
+    float m_cardinal_tension;
+
     bool m_is_vertical_move; ///< 是否鉛直移動 control point
 
 private:
-    int next_CP(int old) { return (old + 1) % m_control_points.size(); }
-    int prev_CP(int old) { return (old <= 0 ? static_cast<int>(m_control_points.size()) - 1
-                                            : (old - 1) % m_control_points.size()); }
+    int next_CP(int old) const { return (old + 1) % m_control_points.size(); }
+    int prev_CP(int old) const { return (old <= 0 ? static_cast<int>(m_control_points.size()) - 1
+                                                  : (old - 1) % m_control_points.size()); }
 
     /// 若沒有選中控制點，回傳true；否則回傳false
     bool nothing_is_selected() const { return m_selected_control_point < 0 || m_selected_control_point >= m_control_points.size(); }
@@ -78,6 +92,18 @@ public:
      */
     void set_orient_for_selected_CP(float alpha, float beta);
 
+    /**
+     * @brief 設定spline type
+     * @param type
+     */
+    void set_line_type(SplineType type) { m_line_type = type; }
+
+    /**
+     * @brief 設定tension
+     * @param tension
+     */
+    void set_tension(float tension) { m_cardinal_tension = tension; }
+
     /// @}
 
     /**
@@ -99,6 +125,17 @@ public:
 private:
     /// 畫控制點
     void draw_control_points();
+
+    /// 畫出軌道的線
+    void draw_line();
+
+    /**
+     * @brief 設置好每兩個控制點間的參數式
+     * @param[out] pos_eqs - 第i項為 i 和 i+1 間座標的參數式
+     * @param[out] orient_eqs - 第i項為 i 和 i+1 間orient的參數式
+     * @post pos_eqs 和 orient_eqs 會先清空，再填值
+     */
+    void set_equation(std::vector<Draw::Param_Equation>& pos_eqs, std::vector<Draw::Param_Equation>& orient_eqs) const;
 
 signals:
     /// 當有control point 被選中 or 被取消選取都會emit

@@ -37,6 +37,22 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->sliderAlpha, &QSlider::valueChanged, this, &MainWindow::update_orient_for_cp);
     connect(ui->sliderBeta, &QSlider::valueChanged, this, &MainWindow::update_orient_for_cp);
 
+    // Train Spline
+    ui->sliderTension->setFixedWidth(120);
+    connect(ui->sliderTension, &QSlider::valueChanged, this, [this](int value) {
+        ui->labelTension->setNum((double)value / 10.);
+        ui->view->get_train().set_tension((float)value / 10.f);
+    });
+    connect(ui->radioLinear, &QRadioButton::clicked, this, [this]() {
+        ui->view->get_train().set_line_type(SplineType::LINEAR);
+    });
+    connect(ui->radioCubicB, &QRadioButton::clicked, this, [this]() {
+        ui->view->get_train().set_line_type(SplineType::CUBIC_B);
+    });
+    connect(ui->radioCardinal, &QRadioButton::clicked, this, [this]() {
+        ui->view->get_train().set_line_type(SplineType::CARDINAL);
+    });
+
     // Misc
     connect(ui->checkBoxWireframe, &QCheckBox::toggled, ui->view, &ViewWidget::toggle_wireframe);
 }

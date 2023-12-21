@@ -4,6 +4,7 @@
 #include <glm/trigonometric.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <cmath>
 #include <ArcBall.h>
@@ -141,7 +142,9 @@ TrainSystem::TrainSystem()
                        {glm::vec3(0, 2, 1), glm::vec3(0, 1, 0)},
                        {glm::vec3(-1, 2, 0), glm::vec3(0, 1, 0)},
                        {glm::vec3(0, 2, -1), glm::vec3(0, 1, 0)}},
-    m_selected_control_point(-1), m_is_vertical_move(false)
+    m_selected_control_point(-1),
+    m_line_type(SplineType::LINEAR), m_cardinal_tension(0.5f),
+    m_is_vertical_move(false)
 {
 
 }
@@ -157,6 +160,7 @@ void TrainSystem::draw(bool wireframe)
 
     glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
     this->draw_control_points();
+    this->draw_line();
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
@@ -230,6 +234,95 @@ void TrainSystem::draw_control_points()
         glVertex3f( size, size , size);
         glEnd();
         glPopMatrix();
+    }
+}
+
+void TrainSystem::draw_line()
+{
+    glColor3ub(0, 0, 0);
+
+    std::vector<Draw::Param_Equation> pos_eq_vec, orient_eq_vec;
+    this->set_equation(pos_eq_vec, orient_eq_vec);
+
+    // 前一個點的資訊
+    glm::vec3 P1, P1L, P1R;
+    glm::vec3 orient1;
+    bool is_P1_initialized = false;
+    // 現在的點的資訊
+    glm::vec3 P2, P2L, P2R;
+    glm::vec3 orient2;
+
+    constexpr float INTERVAL = 0.01f;
+    for (int i = 0; i < m_control_points.size(); ++i) { // for each control point
+        float t = 0.f;
+        while (t <= 1.f) {
+            if (!is_P1_initialized) {
+                P1 = pos_eq_vec[i](t);
+                orient1 = orient_eq_vec[i](t);
+                t += INTERVAL;
+            }
+
+            P2 = pos_eq_vec[i](t);
+            orient2 = orient_eq_vec[i](t);
+
+            glm::vec3 U = P2 - P1; // 方向向量
+            glm::vec3 RIGHT = glm::normalize(glm::cross(U, (orient1 + orient2) / 2.f)); // 向右
+            glm::vec3 unit = CONTROL_POINT_SIZE * RIGHT;
+
+            if (!is_P1_initialized) {
+                P1L = P1 - unit;
+                P1R = P1 + unit;
+            }
+
+            P2L = P2 - unit;
+            P2R = P2 + unit;
+
+            glBegin(GL_LINES);
+            glVertex3fv(glm::value_ptr(P1L));
+            glVertex3fv(glm::value_ptr(P2L));
+
+            glVertex3fv(glm::value_ptr(P1R));
+            glVertex3fv(glm::value_ptr(P2R));
+            glEnd();
+
+            // 前資訊往前移
+            P1 = P2; P1L = P2L; P1R = P2R;
+            orient1 = orient2;
+
+            is_P1_initialized = true;
+            t += INTERVAL;
+        }
+    }
+}
+
+void TrainSystem::set_equation(std::vector<Draw::Param_Equation> &pos_eqs, std::vector<Draw::Param_Equation> &orient_eqs) const
+{
+    pos_eqs.clear();
+    orient_eqs.clear();
+
+    for (int i = 0; i < m_control_points.size(); ++i) {
+        if (m_line_type == SplineType::LINEAR) {
+            const ControlPoint& CP = m_control_points[i];
+            const ControlPoint& nCP = m_control_points[next_CP(i)];
+
+            pos_eqs.push_back(Draw::make_line(CP.pos, nCP.pos));
+            orient_eqs.push_back(Draw::make_line(CP.orient, nCP.orient));
+        }
+        else {
+            const ControlPoint& pCP = m_control_points[prev_CP(i)];
+            const ControlPoint& CP = m_control_points[i];
+            const ControlPoint& nCP = m_control_points[next_CP(i)];
+            const ControlPoint& nnCP = m_control_points[next_CP(next_CP(i))];
+
+            if (m_line_type == SplineType::CARDINAL) {
+                pos_eqs.push_back(Draw::make_cardinal(pCP.pos, CP.pos, nCP.pos, nnCP.pos, m_cardinal_tension));
+                orient_eqs.push_back(Draw::make_cardinal(pCP.orient, CP.orient, nCP.orient, nnCP.orient, m_cardinal_tension));
+            }
+            else {
+                pos_eqs.push_back(Draw::make_cubic_b_spline(pCP.pos, CP.pos, nCP.pos, nnCP.pos));
+                orient_eqs.push_back(Draw::make_cubic_b_spline(pCP.orient, CP.orient, nCP.orient, nnCP.orient));
+            }
+        }
     }
 }
 
