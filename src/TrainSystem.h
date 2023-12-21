@@ -53,7 +53,7 @@ public:
     /**
      * @brief 刪除被選中的control point
      * @note control point至少會留**4**個，所以只剩4個的時候無論如何都不會被刪
-     * @post 若成功刪除，emit is_point_selected(false)
+     * @post 若成功刪除，則選中後一個控制點，並emit is_point_selected(true)；否則，啥都不做
      */
     void delete_CP();
 

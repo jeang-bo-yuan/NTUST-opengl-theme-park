@@ -101,8 +101,10 @@ void TrainSystem::delete_CP()
 
     m_control_points.erase(m_control_points.begin() + m_selected_control_point);
 
-    m_selected_control_point = -1;
-    emit is_point_selected(false);
+    // 原本位置上的控制點被刪了，並由後一項遞補
+    // 所以m_selected_control_point不用加1就已經指到原本的後一項
+    m_selected_control_point %= m_control_points.size();
+    emit is_point_selected(true);
 }
 
 // Ctor /////////////////////////////////////////////////////////////////////////////////////////
