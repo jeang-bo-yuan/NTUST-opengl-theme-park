@@ -111,7 +111,7 @@ public slots:
     void delete_train_CP() { m_train_obj_p->delete_CP(); }
 
     /// 設定速度
-    void set_train_speed(int speed) { m_train_speed = (float)speed / 100; }
+    void set_train_speed(int speed) { m_train_speed = (float)speed / 500; }
 
     void toggle_wireframe(bool on);
 
