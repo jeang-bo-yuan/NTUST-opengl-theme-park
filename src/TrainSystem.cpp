@@ -236,9 +236,14 @@ TrainSystem::TrainSystem()
     m_selected_control_point(-1),
     m_line_type(SplineType::LINEAR), m_cardinal_tension(0.5f),
     m_Arc_Len_Accum(),
+    m_wood_shader("shader/wood.vert", nullptr, nullptr, nullptr, "shader/wood.frag"),
+    m_wood_cube(":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg"),
+    m_unit_box_VAO(1.f),
     m_is_vertical_move(false), m_please_update_arc_len_accum(true)
 {
-
+    glUseProgram(m_wood_shader.Program);
+    glUniform1i(glGetUniformLocation(m_wood_shader.Program, "wood"), 0);
+    glUseProgram(0);
 }
 
 // Draw //////////////////////////////////////////////////////////////////////////////////////////
@@ -255,6 +260,7 @@ void TrainSystem::draw(bool wireframe)
 
     glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
     this->draw_control_points(false);
+    this->draw_wood_with_shader();
     this->draw_line();
     this->draw_sleeper();
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -340,6 +346,25 @@ void TrainSystem::draw_control_points(bool transparent)
     }
 
     glDisable(GL_BLEND);
+}
+
+void TrainSystem::draw_wood_with_shader()
+{
+    m_wood_shader.Use();
+    glUniform1f(glGetUniformLocation(m_wood_shader.Program, "cp_size"), CONTROL_POINT_SIZE);
+    m_wood_cube.bind_to(0);
+
+    for (int i = 0; i < m_control_points.size(); ++i) {
+        const glm::vec3& cp_pos = m_control_points[i].pos;
+        if (cp_pos.y < -1) continue;
+
+        glUniform3fv(glGetUniformLocation(m_wood_shader.Program, "cp_pos"), 1, glm::value_ptr(cp_pos));
+        m_unit_box_VAO.draw();
+    }
+
+
+    m_wood_cube.unbind_from(0);
+    glUseProgram(0);
 }
 
 void TrainSystem::draw_line()

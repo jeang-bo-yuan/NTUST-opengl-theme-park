@@ -6,6 +6,9 @@
 #include <vector>
 #include <utility>
 #include <QObject>
+#include <qtTextureCubeMap.h>
+#include <Box_VAO.h>
+#include <Shader.h>
 #include "ParamEquation.h"
 
 /// 控制點
@@ -142,6 +145,9 @@ private:
     /// 畫控制點
     void draw_control_points(bool transparent);
 
+    /// 畫出木頭支柱
+    void draw_wood_with_shader();
+
     /// 畫出軌道的線
     void draw_line();
 
@@ -178,6 +184,11 @@ private:
     float m_cardinal_tension;  ///< tension for cardinal spline
 
     TrainSystem::Arc_Len_Accum_T m_Arc_Len_Accum; ///< Accumulation of arc length. elem.first = t in "param space", elem.second = s in "real space".
+
+    Shader m_wood_shader;  ///< 繪製木頭支柱
+    qtTextureCubeMap m_wood_cube; ///< 木頭的材質
+
+    Box_VAO m_unit_box_VAO; ///< 表示方塊的VAO
 
     bool m_is_vertical_move; ///< 是否鉛直移動 control point
     bool m_please_update_arc_len_accum; ///< 若為true，則在 TrainSystem::draw() 時會呼叫 TrainSystem::update_arc_len_accum
