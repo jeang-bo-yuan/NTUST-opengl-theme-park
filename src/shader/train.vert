@@ -25,7 +25,7 @@ void main() {
   rotate[1] = vec3(TOP);
   rotate[2] = vec3(LEFT);
 
-  vs_world_pos = rotate * (scale * aPos) + translate;
+  vs_world_pos = rotate * (2 * scale * aPos) + translate;
   gl_Position = Matrices.proj * Matrices.view * vec4(vs_world_pos, 1);
   vs_normal = normalize(aNormal);
 }
