@@ -27,7 +27,7 @@ MessageCallback( GLenum source,
 ViewWidget::ViewWidget(QWidget *parent)
     : QOpenGLWidget(parent),
     m_arc_ball(glm::vec3(0, 0, 0), 10, glm::radians(45.f), glm::radians(20.f)),
-    m_old_arc_ball(m_arc_ball), m_start_drag_point(), m_wireframe_mode(false)
+    m_old_arc_ball(m_arc_ball), m_start_drag_point(), m_train_speed(0.1), m_wireframe_mode(false)
 {
     this->setFocusPolicy(Qt::StrongFocus);
 }
@@ -96,13 +96,6 @@ void ViewWidget::initializeGL()
 
         m_train_obj_p = std::make_unique<TrainSystem>();
         connect(m_train_obj_p.get(), &TrainSystem::is_point_selected, this, &ViewWidget::is_point_selected);
-
-        std::cout << "Loading Model..." << std::endl;
-        m_back_pack_p = std::make_unique<Model>("asset/model/backpack/backpack.obj");
-
-        m_model_shader_p = std::make_unique<Shader>("shader/model.vert", nullptr, nullptr, nullptr, "shader/model.frag");
-        m_model_shader_p->Use();
-        glUniform1i(glGetUniformLocation(m_model_shader_p->Program, "diffuse1"), 0);
     }
     catch (std::exception& ex) {
         QMessageBox::critical(nullptr, "Failed", ex.what());
@@ -151,7 +144,7 @@ void ViewWidget::resizeGL(int w, int h)
 void ViewWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    m_train_obj_p->updateTrainPos();
+    m_train_obj_p->updateTrainPos(m_train_speed);
 
     // bind UBO
     m_matrices_UBO_p->bind_to(0);
@@ -160,20 +153,6 @@ void ViewWidget::paintGL()
     m_skybox_obj_p->draw(m_wireframe_mode);
     m_water_obj_p->draw(m_wireframe_mode);
     m_train_obj_p->draw(m_wireframe_mode);
-
-//    m_model_shader_p->Use();
-//    glPolygonMode(GL_FRONT_AND_BACK, m_wireframe_mode ? GL_LINE : GL_FILL);
-//    m_back_pack_p->draw();
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-//    glUseProgram(0);
-//    glColor3ub(255, 0, 0);
-//    glBegin(GL_QUADS);
-//    glVertex3i(-1, 0, -1);
-//    glVertex3i(-1, 0, 1);
-//    glVertex3i(1, 0, 1);
-//    glVertex3i(1, 0, -1);
-//    glEnd();
 }
 
 // Mouse Event ////////////////////////////////////////////////////////////////////////

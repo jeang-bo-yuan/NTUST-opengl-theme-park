@@ -129,8 +129,9 @@ public:
 public:
     TrainSystem();
 
-    /// 依據trainU和ArcLenAccum去更新並往前火車的位置
-    void updateTrainPos();
+    /// @brief 依據trainU和ArcLenAccum去更新並往前火車的位置
+    /// @param distance - 向前的距離
+    void updateTrainPos(float distance);
 
     /// 取得火車的位置
     glm::vec3 getTrainPos() const { return m_train_pos; }

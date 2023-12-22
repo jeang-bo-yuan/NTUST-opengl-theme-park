@@ -253,16 +253,16 @@ TrainSystem::TrainSystem()
     glUseProgram(0);
 
     this->update_arc_len_accum();
-    this->updateTrainPos();
+    this->updateTrainPos(0);
 }
 
-void TrainSystem::updateTrainPos()
+void TrainSystem::updateTrainPos(float distance)
 {
     if (m_please_update_arc_len_accum)
         this->update_arc_len_accum();
 
     float S = T_to_S(m_trainU);
-    S += Track_Interval;
+    S += distance;
     m_trainU = S_to_T(S);
 
     int cp_id = floor(m_trainU);

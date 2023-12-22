@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->buttonDeleteCP, &QPushButton::clicked, ui->view, &ViewWidget::delete_train_CP);
     connect(ui->sliderAlpha, &QSlider::valueChanged, this, &MainWindow::update_orient_for_cp);
     connect(ui->sliderBeta, &QSlider::valueChanged, this, &MainWindow::update_orient_for_cp);
+    connect(ui->sliderSpeed, &QSlider::valueChanged, ui->view, &ViewWidget::set_train_speed);
 
     // Train Spline
     ui->sliderTension->setFixedWidth(120);

@@ -51,14 +51,10 @@ private:
 
     // train
     std::unique_ptr<TrainSystem> m_train_obj_p;
+    float m_train_speed; ///< 火車的速度
 
     /// 每隔一段時間就updata一次
     QTimer m_timer;
-
-
-
-    std::unique_ptr<Shader> m_model_shader_p;
-    std::unique_ptr<Model> m_back_pack_p;
 
     /// 是否繪製wireframe
     bool m_wireframe_mode;
@@ -113,6 +109,9 @@ public slots:
     void add_train_CP() { m_train_obj_p->add_CP(); }
     /// 刪掉火車的一個control point
     void delete_train_CP() { m_train_obj_p->delete_CP(); }
+
+    /// 設定速度
+    void set_train_speed(int speed) { m_train_speed = (float)speed / 100; }
 
     void toggle_wireframe(bool on);
 
