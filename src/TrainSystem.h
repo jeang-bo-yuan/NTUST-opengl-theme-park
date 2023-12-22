@@ -140,7 +140,7 @@ public:
 
 private:
     /// 畫控制點
-    void draw_control_points();
+    void draw_control_points(bool transparent);
 
     /// 畫出軌道的線
     void draw_line();

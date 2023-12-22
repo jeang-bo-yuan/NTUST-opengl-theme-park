@@ -254,15 +254,22 @@ void TrainSystem::draw(bool wireframe)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
-    this->draw_control_points();
+    this->draw_control_points(false);
     this->draw_line();
     this->draw_sleeper();
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    if (wireframe)
+        this->draw_control_points(true); // 畫一個透明的控制點
 }
 
-void TrainSystem::draw_control_points()
+void TrainSystem::draw_control_points(bool transparent)
 {
     glMatrixMode(GL_MODELVIEW);
+    if (transparent) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ZERO, GL_ONE);
+    }
 
     for (size_t i = 0; i < m_control_points.size(); ++i) {
         const glm::vec3& pos = m_control_points[i].pos;
@@ -331,6 +338,8 @@ void TrainSystem::draw_control_points()
         glEnd();
         glPopMatrix();
     }
+
+    glDisable(GL_BLEND);
 }
 
 void TrainSystem::draw_line()
