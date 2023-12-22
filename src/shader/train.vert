@@ -1,6 +1,5 @@
 #version 430 core
 layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec2 aTexCoord;
 layout(location = 2) in vec3 aNormal;
 
 // 平移
@@ -17,7 +16,6 @@ layout(std140, binding = 0) uniform MatricesBlock {
   uniform mat4 proj;
 } Matrices;
 
-out vec2 vs_texCoord;
 out vec3 vs_world_pos;
 out vec3 vs_normal;
 
@@ -29,5 +27,5 @@ void main() {
 
   vs_world_pos = rotate * (scale * aPos) + translate;
   gl_Position = Matrices.proj * Matrices.view * vec4(vs_world_pos, 1);
-  vs_texCoord = aTexCoord;
+  vs_normal = normalize(aNormal);
 }
