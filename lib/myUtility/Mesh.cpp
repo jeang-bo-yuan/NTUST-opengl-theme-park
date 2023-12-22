@@ -49,6 +49,19 @@ void Mesh::draw()
 
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
 
+    // bind textures
+    // for "texture_diffuse1" to "texture_diffuse(i+1)"
+    for (int i = 0; i < m_diffuse.size(); ++i) {
+        // 綁定 texture_diffuse(i+1) 到 2 * ((i+1) - 1) 上
+        m_diffuse[i]->unbind_from(2 * i);
+    }
+
+    // for "texture_specular1" to "texture_specular(i+1)"
+    for (int i = 0; i < m_specular.size(); ++i) {
+        // 綁定 texture_specular(i+1) 到 2 * ((i+1) - 1) + 1
+        m_specular[i]->unbind_from(2 * i + 1);
+    }
+
     glBindVertexArray(0);
 }
 
