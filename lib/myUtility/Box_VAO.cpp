@@ -65,10 +65,12 @@ void Box_VAO::draw()
 {
     glBindVertexArray(m_VAO_id);
     glDrawArrays(GL_QUADS, /*first*/0, /*count*/24);
+    glBindVertexArray(0);
 }
 
 void Box_VAO::draw_face(FACE face)
 {
     glBindVertexArray(m_VAO_id);
     glDrawArrays(GL_QUADS, /*first*/(int)face, /*count*/4);
+    glBindVertexArray(0);
 }

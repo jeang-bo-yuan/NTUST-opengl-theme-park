@@ -79,5 +79,6 @@ void Wave_VAO::draw()
 {
     glBindVertexArray(m_VAO_id);
     glDrawElements(GL_TRIANGLES, m_num_of_elements, GL_UNSIGNED_INT, (void*)0);
+    glBindVertexArray(0);
 }
 
