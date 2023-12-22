@@ -14,6 +14,90 @@ constexpr float CONTROL_POINT_SIZE = 0.1f;
 /// 大小的斜邊
 constexpr float HYPOT_CP_SIZE = 1.41421f /*sqrt(2)*/ * CONTROL_POINT_SIZE;
 
+constexpr float Track_Interval = 0.1f;
+constexpr float Param_Interval = 0.0625f;
+
+// Arc Len Accum ////////////////////////////////////////////////////////////////
+
+float TrainSystem::T_to_S(float T) const
+{
+    /// @note 超出範圍時，做wrap
+    while (T < 0) T += m_Arc_Len_Accum.back().first;
+    while (T >= m_Arc_Len_Accum.back().first) T -= m_Arc_Len_Accum.back().first;
+
+    /// @note 處理極端特例，當T很接近0或最大參數時，回傳0
+    if (fabs(T) < 1.e-4 || fabs(T - m_Arc_Len_Accum.back().first) < 1.e-4) return 0;
+
+    for (size_t i = 0; i < m_Arc_Len_Accum.size() - 1; ++i) {
+        const float lowU = m_Arc_Len_Accum[i].first;
+        const float highU = m_Arc_Len_Accum[i + 1].first;
+        if (lowU <= T && T < highU) {
+            const float lowS = m_Arc_Len_Accum[i].second;
+            const float highS = m_Arc_Len_Accum[i + 1].second;
+            return lowS + (T - lowU) / (highU - lowU) * (highS - lowS);
+        }
+    }
+
+    assert(false); // should not go here
+    return NAN;
+}
+
+float TrainSystem::S_to_T(float S) const
+{
+    /// @note 超出範圍時，做wrap
+    while (S < 0) S += m_Arc_Len_Accum.back().second;
+    while (S >= m_Arc_Len_Accum.back().second) S -= m_Arc_Len_Accum.back().second;
+
+    /// @note 處理極端特例，當S很接近0或最大長度時，回傳0
+    if (fabs(S) < 1.e-4 || fabs(S - m_Arc_Len_Accum.back().second) < 1.e-4) return 0;
+
+    // （實際空間） 轉回 （參數空間）
+    for (size_t i = 0; i < m_Arc_Len_Accum.size() - 1; ++i) {
+        const float lowS = m_Arc_Len_Accum[i].second;
+        const float highS = m_Arc_Len_Accum[i + 1].second;
+        if ((lowS <= S && S < highS)) {
+            const float lowU = m_Arc_Len_Accum[i].first;
+            const float highU = m_Arc_Len_Accum[i + 1].first;
+            return lowU + (S - lowS) / (highS - lowS) * (highU - lowU);
+        }
+    }
+
+    assert(false); // should not go here
+    return NAN;
+}
+
+void TrainSystem::update_arc_len_accum()
+{
+    // reset
+    m_Arc_Len_Accum.clear();
+    m_Arc_Len_Accum.reserve(m_control_points.size() * 16 + 1);
+    m_Arc_Len_Accum.emplace_back(std::pair<float, float>{ 0, 0 });
+
+    // for each control point
+    for (size_t cp_id = 0; cp_id < m_control_points.size(); ++cp_id) {
+        Draw::Param_Equation point_eq, unused;
+        set_equation(cp_id, point_eq, unused);
+
+        glm::vec3 p1 = point_eq(0);
+        for (float t = Param_Interval; t <= 1; t += Param_Interval) {
+            glm::vec3 p2 = point_eq(t);
+            glm::vec3 delta = p2 - p1;
+            float len = sqrtf(delta.x * delta.x + delta.y * delta.y + delta.z * delta.z);
+
+            m_Arc_Len_Accum.emplace_back(std::pair<float, float>{
+                cp_id + t,
+                len + m_Arc_Len_Accum.back().second
+            });
+
+            // store it for next iteration
+            p1 = p2;
+        }
+    }
+
+    m_please_update_arc_len_accum = false;
+}
+
+
 // Mouse Event //////////////////////////////////////////////////////////////////
 
 bool TrainSystem::process_click(glm::vec3 pos)
@@ -67,6 +151,7 @@ bool TrainSystem::process_drag(glm::vec3 eye, glm::vec3 pos)
         m_control_points[m_selected_control_point].pos = new_cp_pos;
     }
 
+    m_please_update_arc_len_accum = true;
     return true;
 }
 
@@ -93,6 +178,8 @@ void TrainSystem::add_CP()
 
         emit is_point_selected(true);
     }
+
+    m_please_update_arc_len_accum = true;
 }
 
 void TrainSystem::delete_CP()
@@ -108,6 +195,8 @@ void TrainSystem::delete_CP()
     // 所以m_selected_control_point不用加1就已經指到原本的後一項
     m_selected_control_point %= m_control_points.size();
     emit is_point_selected(true);
+
+    m_please_update_arc_len_accum = true;
 }
 
 void TrainSystem::orient_of_selected_CP(float &alpha, float &beta) const
@@ -133,6 +222,8 @@ void TrainSystem::set_orient_for_selected_CP(float alpha, float beta)
 
     ArcBall ball(glm::vec3(0, 0, 0), 1.f, alpha, beta);
     m_control_points[m_selected_control_point].orient = ball.calc_pos();
+
+    m_please_update_arc_len_accum = true;
 }
 
 // Ctor /////////////////////////////////////////////////////////////////////////////////////////
@@ -144,7 +235,8 @@ TrainSystem::TrainSystem()
                        {glm::vec3(0, 2, -1), glm::vec3(0, 1, 0)}},
     m_selected_control_point(-1),
     m_line_type(SplineType::LINEAR), m_cardinal_tension(0.5f),
-    m_is_vertical_move(false)
+    m_Arc_Len_Accum(),
+    m_is_vertical_move(false), m_please_update_arc_len_accum(true)
 {
 
 }
@@ -153,6 +245,9 @@ TrainSystem::TrainSystem()
 
 void TrainSystem::draw(bool wireframe)
 {
+    if (m_please_update_arc_len_accum)
+        this->update_arc_len_accum();
+
     glUseProgram(0);
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -161,6 +256,7 @@ void TrainSystem::draw(bool wireframe)
     glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
     this->draw_control_points();
     this->draw_line();
+    this->draw_sleeper();
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
@@ -295,33 +391,153 @@ void TrainSystem::draw_line()
     }
 }
 
+void TrainSystem::draw_sleeper() const
+{
+    std::vector<Draw::Param_Equation> point_eq_vec;
+    std::vector<Draw::Param_Equation> orient_eq_vec;
+    point_eq_vec.reserve(m_control_points.size());
+    orient_eq_vec.reserve(m_control_points.size());
+
+    // for each control point
+    for (size_t i = 0; i < m_control_points.size(); ++i) {
+        Draw::Param_Equation point_eq, orient_eq;
+        set_equation(i, point_eq, orient_eq);
+        point_eq_vec.push_back(point_eq);
+        orient_eq_vec.push_back(orient_eq); // store their equation
+    }
+
+    bool wrap_back = false; // 是否繞回S=0了，則是用來確保軌道頭尾相連
+    glm::vec3 p1 = point_eq_vec[0](0);
+
+    for (float S2 = Track_Interval; !wrap_back; S2 += Track_Interval) {
+        // 繞回S=0（S大於等於最大值）了
+        if (S2 >= m_Arc_Len_Accum.back().second) {
+            wrap_back = true;
+            S2 = m_Arc_Len_Accum.back().second;
+        }
+
+        float T2 = S_to_T(S2);
+        glm::vec3 p2, orient; {
+            size_t cp_id = static_cast<size_t>(floorf(T2));
+            float t = T2 - cp_id;
+            p2 = point_eq_vec[cp_id](t);
+            orient = orient_eq_vec[cp_id](t - Param_Interval / 2.f);
+        }
+
+        // points
+        glm::vec3 middle = (p1 + p2) * 0.5f;
+        // 方向向量
+        glm::vec3 u = (p2 - p1);
+        float line_len = glm::length(u); // 這一段的長度
+        u = glm::normalize(u);
+
+        // u 和 orient 外積，得到軌道水平平移（向右）的方向
+        glm::vec3 horizontal = glm::normalize(glm::cross(u, orient));
+
+        // 畫sleeper
+        glm::vec3 DOWN = glm::normalize(glm::cross(u, horizontal));
+        GLfloat rotate_mat[16] = {
+            horizontal.x, horizontal.y, horizontal.z, 0,
+            DOWN.x, DOWN.y, DOWN.z, 0,
+            u.x, u.y, u.z, 0,
+            0, 0, 0, 1
+        };
+        middle = middle + DOWN * CONTROL_POINT_SIZE * 0.05f; // 住下一點點
+        glPushMatrix();
+        glTranslatef(middle.x, middle.y, middle.z);
+        glMultMatrixf(rotate_mat);
+        glScalef(CONTROL_POINT_SIZE * 1.3f, CONTROL_POINT_SIZE * 0.1f, line_len * 0.3f);
+        glColor3ub(255, 255, 255);
+        glEnable(GL_NORMALIZE);
+        {
+            constexpr GLfloat vertex_arr[] = {
+                1, 0, 1,
+                1, 0, -1,
+                -1, 0, -1,
+                -1, 0, 1,
+                1, 1 * 2, 1,
+                1, 1 * 2, -1,
+                -1, 1 * 2, -1,
+                -1, 1 * 2, 1,
+            };
+            constexpr GLuint indices[] = {
+                0, 1, 2, 3, // normal = (0, -1, 0)
+                0, 1, 5, 4, // normal = (1, 0, 0)
+                0, 3, 7, 4, // normal = (0, 0, 1)
+                4, 5, 6, 7, // normal = (0, 1, 0)
+                1, 5, 6, 2, // normal = (0, 0, -1)
+                3, 2, 6, 7  // normal = (-1, 0, 0)
+            };
+
+            glEnableClientState(GL_VERTEX_ARRAY);
+            glVertexPointer(3, GL_FLOAT, 0, vertex_arr);
+
+            glNormal3f(0, -1, 0);
+            glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, indices);
+
+            glNormal3f(1, 0, 0);
+            glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, indices + 4);
+
+            glNormal3f(0, 0, 1);
+            glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, indices + 8);
+
+            glNormal3f(0, 1, 0);
+            glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, indices + 12);
+
+            glNormal3f(0, 0, -1);
+            glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, indices + 16);
+
+            glNormal3f(-1, 0, 0);
+            glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, indices + 20);
+
+            glVertexPointer(3, GL_FLOAT, 0, nullptr);
+            glDisableClientState(GL_VERTEX_ARRAY);
+        }
+        glDisable(GL_NORMALIZE);
+        glPopMatrix();
+
+        // store for next iteration
+        p1 = p2;
+    }
+}
+
 void TrainSystem::set_equation(std::vector<Draw::Param_Equation> &pos_eqs, std::vector<Draw::Param_Equation> &orient_eqs) const
 {
     pos_eqs.clear();
     orient_eqs.clear();
 
     for (int i = 0; i < m_control_points.size(); ++i) {
-        if (m_line_type == SplineType::LINEAR) {
-            const ControlPoint& CP = m_control_points[i];
-            const ControlPoint& nCP = m_control_points[next_CP(i)];
+        Draw::Param_Equation pos_eq, orient_eq;
 
-            pos_eqs.push_back(Draw::make_line(CP.pos, nCP.pos));
-            orient_eqs.push_back(Draw::make_line(CP.orient, nCP.orient));
+        this->set_equation(i, pos_eq, orient_eq);
+
+        pos_eqs.push_back(pos_eq);
+        orient_eqs.push_back(orient_eq);
+    }
+}
+
+void TrainSystem::set_equation(int cp_id, Draw::Param_Equation &pos_eq, Draw::Param_Equation &orient_eq) const
+{
+    if (m_line_type == SplineType::LINEAR) {
+        const ControlPoint& CP = m_control_points[cp_id];
+        const ControlPoint& nCP = m_control_points[next_CP(cp_id)];
+
+        pos_eq = Draw::make_line(CP.pos, nCP.pos);
+        orient_eq = Draw::make_line(CP.orient, nCP.orient);
+    }
+    else {
+        const ControlPoint& pCP = m_control_points[prev_CP(cp_id)];
+        const ControlPoint& CP = m_control_points[cp_id];
+        const ControlPoint& nCP = m_control_points[next_CP(cp_id)];
+        const ControlPoint& nnCP = m_control_points[next_CP(next_CP(cp_id))];
+
+        if (m_line_type == SplineType::CARDINAL) {
+            pos_eq = Draw::make_cardinal(pCP.pos, CP.pos, nCP.pos, nnCP.pos, m_cardinal_tension);
+            orient_eq = Draw::make_cardinal(pCP.orient, CP.orient, nCP.orient, nnCP.orient, m_cardinal_tension);
         }
         else {
-            const ControlPoint& pCP = m_control_points[prev_CP(i)];
-            const ControlPoint& CP = m_control_points[i];
-            const ControlPoint& nCP = m_control_points[next_CP(i)];
-            const ControlPoint& nnCP = m_control_points[next_CP(next_CP(i))];
-
-            if (m_line_type == SplineType::CARDINAL) {
-                pos_eqs.push_back(Draw::make_cardinal(pCP.pos, CP.pos, nCP.pos, nnCP.pos, m_cardinal_tension));
-                orient_eqs.push_back(Draw::make_cardinal(pCP.orient, CP.orient, nCP.orient, nnCP.orient, m_cardinal_tension));
-            }
-            else {
-                pos_eqs.push_back(Draw::make_cubic_b_spline(pCP.pos, CP.pos, nCP.pos, nnCP.pos));
-                orient_eqs.push_back(Draw::make_cubic_b_spline(pCP.orient, CP.orient, nCP.orient, nnCP.orient));
-            }
+            pos_eq = Draw::make_cubic_b_spline(pCP.pos, CP.pos, nCP.pos, nnCP.pos);
+            orient_eq = Draw::make_cubic_b_spline(pCP.orient, CP.orient, nCP.orient, nnCP.orient);
         }
     }
 }
