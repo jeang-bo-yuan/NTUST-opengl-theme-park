@@ -151,6 +151,7 @@ void ViewWidget::resizeGL(int w, int h)
 void ViewWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    m_train_obj_p->updateTrainPos();
 
     // bind UBO
     m_matrices_UBO_p->bind_to(0);
@@ -160,10 +161,10 @@ void ViewWidget::paintGL()
     m_water_obj_p->draw(m_wireframe_mode);
     m_train_obj_p->draw(m_wireframe_mode);
 
-    m_model_shader_p->Use();
-    glPolygonMode(GL_FRONT_AND_BACK, m_wireframe_mode ? GL_LINE : GL_FILL);
-    m_back_pack_p->draw();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+//    m_model_shader_p->Use();
+//    glPolygonMode(GL_FRONT_AND_BACK, m_wireframe_mode ? GL_LINE : GL_FILL);
+//    m_back_pack_p->draw();
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 //    glUseProgram(0);
 //    glColor3ub(255, 0, 0);

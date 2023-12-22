@@ -9,6 +9,7 @@
 #include <qtTextureCubeMap.h>
 #include <Box_VAO.h>
 #include <Shader.h>
+#include <Model.h>
 #include "ParamEquation.h"
 
 /// 控制點
@@ -128,6 +129,12 @@ public:
 public:
     TrainSystem();
 
+    /// 依據trainU和ArcLenAccum去更新並往前火車的位置
+    void updateTrainPos();
+
+    /// 取得火車的位置
+    glm::vec3 getTrainPos() const { return m_train_pos; }
+
     /**
      * @brief 開關「鉛直移動」
      * @param on - true->開啟；false->關閉
@@ -153,6 +160,9 @@ private:
 
     /// 畫枕木
     void draw_sleeper() const;
+
+    /// 畫火車
+    void draw_train_with_shader();
 
     /**
      * @brief 設置好「每兩個」控制點間的參數式
@@ -186,9 +196,14 @@ private:
     TrainSystem::Arc_Len_Accum_T m_Arc_Len_Accum; ///< Accumulation of arc length. elem.first = t in "param space", elem.second = s in "real space".
 
     Shader m_wood_shader;  ///< 繪製木頭支柱
-    qtTextureCubeMap m_wood_cube; ///< 木頭的材質
+    qtTextureCubeMap m_wood_cube; ///< 木頭的材質，綁定在0
 
     Box_VAO m_unit_box_VAO; ///< 表示方塊的VAO
+
+    glm::vec3 m_train_pos; ///!< 火車在哪
+    float m_trainU; ///< 火車在參數空間的哪裡
+    Model m_train_model; ///< 火車模型
+    Shader m_train_shader;  ///< 繪製火車的shader
 
     bool m_is_vertical_move; ///< 是否鉛直移動 control point
     bool m_please_update_arc_len_accum; ///< 若為true，則在 TrainSystem::draw() 時會呼叫 TrainSystem::update_arc_len_accum

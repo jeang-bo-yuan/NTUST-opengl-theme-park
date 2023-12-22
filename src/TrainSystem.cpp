@@ -239,11 +239,36 @@ TrainSystem::TrainSystem()
     m_wood_shader("shader/wood.vert", nullptr, nullptr, nullptr, "shader/wood.frag"),
     m_wood_cube(":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg"),
     m_unit_box_VAO(1.f),
+    m_train_pos(0, 0, 0), m_trainU(0.f),
+    m_train_model("asset/model/train/train.fbx"),
+    m_train_shader("shader/train.vert", nullptr, nullptr, nullptr, "shader/train.frag"),
     m_is_vertical_move(false), m_please_update_arc_len_accum(true)
 {
     glUseProgram(m_wood_shader.Program);
     glUniform1i(glGetUniformLocation(m_wood_shader.Program, "wood"), 0);
     glUseProgram(0);
+
+    glUseProgram(m_train_shader.Program);
+    glUniform1i(glGetUniformLocation(m_train_shader.Program, "diffuse"), 0);
+    glUseProgram(0);
+
+    this->update_arc_len_accum();
+    this->updateTrainPos();
+}
+
+void TrainSystem::updateTrainPos()
+{
+    if (m_please_update_arc_len_accum)
+        this->update_arc_len_accum();
+
+    float S = T_to_S(m_trainU);
+    S += Track_Interval;
+    m_trainU = S_to_T(S);
+
+    int cp_id = floor(m_trainU);
+    Draw::Param_Equation pos_eq, orient_eq;
+    set_equation(cp_id, pos_eq, orient_eq);
+    m_train_pos = pos_eq(m_trainU - cp_id);
 }
 
 // Draw //////////////////////////////////////////////////////////////////////////////////////////
@@ -263,6 +288,7 @@ void TrainSystem::draw(bool wireframe)
     this->draw_wood_with_shader();
     this->draw_line();
     this->draw_sleeper();
+    this->draw_train_with_shader();
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     if (wireframe)
@@ -533,6 +559,32 @@ void TrainSystem::draw_sleeper() const
         // store for next iteration
         p1 = p2;
     }
+}
+
+void TrainSystem::draw_train_with_shader()
+{
+    m_train_shader.Use();
+    glUniform1f(glGetUniformLocation(m_train_shader.Program, "scale"), CONTROL_POINT_SIZE);
+
+    glUniform3fv(glGetUniformLocation(m_train_shader.Program, "translate"), 1, glm::value_ptr(m_train_pos));
+
+    // calc FRONT, LEFT, TOP
+    int cp_id = floor(m_trainU);
+    float T = m_trainU - cp_id;
+    Draw::Param_Equation point_eq, orient_eq;
+    this->set_equation(cp_id, point_eq, orient_eq);
+
+    glm::vec3 FRONT = glm::normalize(point_eq(T + 0.001) - point_eq(T));
+    glm::vec3 LEFT = glm::normalize(glm::cross(orient_eq(T), FRONT));
+    glm::vec3 TOP = glm::normalize(glm::cross(FRONT, LEFT));
+
+    glUniform3fv(glGetUniformLocation(m_train_shader.Program, "FRONT"), 1, glm::value_ptr(FRONT));
+    glUniform3fv(glGetUniformLocation(m_train_shader.Program, "LEFT"), 1, glm::value_ptr(LEFT));
+    glUniform3fv(glGetUniformLocation(m_train_shader.Program, "TOP"), 1, glm::value_ptr(TOP));
+
+    m_train_model.draw();
+
+    glUseProgram(0);
 }
 
 void TrainSystem::set_equation(std::vector<Draw::Param_Equation> &pos_eqs, std::vector<Draw::Param_Equation> &orient_eqs) const
