@@ -77,6 +77,18 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         else
             vertex.aTexcoord = glm::vec2(0.0f, 0.0f);
 
+        // 如果有vertex color則複製
+        if (mesh->HasVertexColors(i))
+        {
+            std::cout << "There is color" << std::endl;
+            vertex.aColor.r = mesh->mColors[i]->r;
+            vertex.aColor.g = mesh->mColors[i]->g;
+            vertex.aColor.b = mesh->mColors[i]->b;
+            vertex.aColor.a = mesh->mColors[i]->a;
+        }
+        else
+            vertex.aColor = glm::vec4(1, 1, 1, 1);
+
         vertices.emplace_back(vertex);
     }
 

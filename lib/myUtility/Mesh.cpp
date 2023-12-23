@@ -85,6 +85,9 @@ void Mesh::setupMesh()
     // 2 -> aNormal
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Mesh::Vertex, aNormal));
     glEnableVertexAttribArray(2);
+    // 3 -> aColor
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Mesh::Vertex, aColor));
+    glEnableVertexAttribArray(3);
 
 
     // set up EBO

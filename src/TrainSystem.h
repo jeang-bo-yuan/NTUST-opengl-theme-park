@@ -204,10 +204,12 @@ private:
     glm::vec3 m_train_pos; ///!< 火車在哪
     float m_trainU; ///< 火車在參數空間的哪裡
     Model m_train_model; ///< 火車模型
+    Model m_train2_model; ///< 2
     Shader m_train_shader;  ///< 繪製火車的shader
 
     bool m_is_vertical_move; ///< 是否鉛直移動 control point
     bool m_please_update_arc_len_accum; ///< 若為true，則在 TrainSystem::draw() 時會呼叫 TrainSystem::update_arc_len_accum
+    bool m_which_train; ///< false-> m_train, true-> m_train2
 };
 
 #endif // TRAINSYSTEM_H

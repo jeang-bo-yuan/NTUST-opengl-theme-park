@@ -1,6 +1,7 @@
 #version 430 core
 in vec3 vs_world_pos;
 in vec3 vs_normal;
+in vec4 vs_color;
 
 layout (std140, binding = 1) uniform LightBlock {
   vec4 eye_position;
@@ -27,5 +28,5 @@ void main() {
   float diffuse = max(0.0, dot(vs_normal, light_direction));
   float specular = pow(max(0.0, dot(vs_normal, half_vector)), shininess);
 
-  FragColor =  min(color_ambient, vec4(1.0)) + diffuse * color_diffuse /*+ specular * color_specular*/;
+  FragColor =  min(vs_color * color_ambient, vec4(1.0)) + diffuse * color_diffuse + specular * color_specular;
 }

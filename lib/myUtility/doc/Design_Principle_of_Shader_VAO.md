@@ -11,6 +11,7 @@
 |0    |vec3|頂點的座標|
 |1    |vec2|Texture Coordinate|
 |2    |vec3|Normal|
+|3    |vec4|Color|
 
 - Shader的Uniform Block必須遵守下列規範
 

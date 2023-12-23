@@ -5,6 +5,7 @@
 #include <glad/gl.h>
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 #include <vector>
 
 #include <memory>
@@ -18,6 +19,7 @@
  * - (location = 0) Vertex::aPosition
  * - (location = 1) Vertex::aTexcoord
  * - (location = 2) Vertex::aNormal
+ * - (location = 3) Vertex::aColor
  */
 class Mesh {
 public:
@@ -26,6 +28,7 @@ public:
         glm::vec3 aPosition;  ///< 位置
         glm::vec3 aNormal;    ///< 法向量
         glm::vec2 aTexcoord;  ///< 材質座標
+        glm::vec4 aColor;     ///< 顏色
     };
 
     /// 材質，指向qtTextureImage2D的指標
