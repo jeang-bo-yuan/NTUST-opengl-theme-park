@@ -56,6 +56,7 @@ add_subdirectory("lib/myUtility")
 file(GLOB_RECURSE SHADER_SOURCE RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" CONFIGURE_DEPENDS "src/shader/*.vert" "src/shader/*.frag" "src/shader/*.geom")
 
 add_executable(theme_park
+    src/Island.h src/Island.cpp
     src/main.cpp
     src/MainWindow.h src/MainWindow.cpp src/MainWindow.ui
     src/ParamEquation.h src/ParamEquation.cpp

@@ -22,6 +22,7 @@
 #include "Skybox.h"
 #include "TrainSystem.h"
 #include "Water.h"
+#include "Island.h"
 
 class ViewWidget : public QOpenGLWidget
 {
@@ -52,6 +53,8 @@ private:
     // train
     std::unique_ptr<TrainSystem> m_train_obj_p;
     float m_train_speed; ///< 火車的速度
+
+    std::unique_ptr<Island> m_island_obj_p;
 
     /// 每隔一段時間就updata一次
     QTimer m_timer;

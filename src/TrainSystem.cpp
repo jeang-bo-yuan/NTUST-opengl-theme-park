@@ -229,10 +229,10 @@ void TrainSystem::set_orient_for_selected_CP(float alpha, float beta)
 // Ctor /////////////////////////////////////////////////////////////////////////////////////////
 
 TrainSystem::TrainSystem()
-    : m_control_points{{glm::vec3(2, 0, 0), glm::vec3(0, 1, 0)},
-                       {glm::vec3(0, 0, 2), glm::vec3(0, 1, 0)},
-                       {glm::vec3(-2, 0, 0), glm::vec3(0, 1, 0)},
-                       {glm::vec3(0, 0, -2), glm::vec3(0, 1, 0)}},
+    : m_control_points{{glm::vec3(2, 1, 0), glm::vec3(0, 1, 0)},
+                       {glm::vec3(0, 1, 2), glm::vec3(0, 1, 0)},
+                       {glm::vec3(-2, 1, 0), glm::vec3(0, 1, 0)},
+                       {glm::vec3(0, 1, -2), glm::vec3(0, 1, 0)}},
     m_selected_control_point(-1),
     m_line_type(SplineType::LINEAR), m_cardinal_tension(0.5f),
     m_Arc_Len_Accum(),

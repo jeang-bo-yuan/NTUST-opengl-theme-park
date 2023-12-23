@@ -83,7 +83,6 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, aiMatrix4x4 transfor
         // 如果有vertex color則使用第0個color set
         if (mesh->HasVertexColors(0))
         {
-            std::cout << "There is color" << std::endl;
             vertex.aColor.r = mesh->mColors[0][i].r;
             vertex.aColor.g = mesh->mColors[0][i].g;
             vertex.aColor.b = mesh->mColors[0][i].b;

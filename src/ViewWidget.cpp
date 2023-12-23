@@ -86,7 +86,7 @@ void ViewWidget::initializeGL()
     /// @todo load UBO
     m_matrices_UBO_p = std::make_unique<UBO>(2 * sizeof(glm::mat4), GL_DYNAMIC_DRAW);
     m_light_UBO_p = std::make_unique<UBO>(2 * sizeof(glm::vec4), GL_DYNAMIC_DRAW);
-    m_light_UBO_p->BufferSubData(sizeof(glm::vec4), sizeof(glm::vec4), glm::value_ptr(glm::vec4(0, 1, 0, 1)));
+    m_light_UBO_p->BufferSubData(sizeof(glm::vec4), sizeof(glm::vec4), glm::value_ptr(glm::vec4(0, 5, 10, 1)));
     this->update_view_from_arc_ball();
 
     /// @todo initialize drawable object
@@ -96,6 +96,8 @@ void ViewWidget::initializeGL()
 
         m_train_obj_p = std::make_unique<TrainSystem>();
         connect(m_train_obj_p.get(), &TrainSystem::is_point_selected, this, &ViewWidget::is_point_selected);
+
+        m_island_obj_p = std::make_unique<Island>();
     }
     catch (std::exception& ex) {
         QMessageBox::critical(nullptr, "Failed", ex.what());
@@ -153,6 +155,7 @@ void ViewWidget::paintGL()
     m_skybox_obj_p->draw(m_wireframe_mode);
     m_water_obj_p->draw(m_wireframe_mode);
     m_train_obj_p->draw(m_wireframe_mode);
+    m_island_obj_p->draw(m_wireframe_mode);
 }
 
 // Mouse Event ////////////////////////////////////////////////////////////////////////
