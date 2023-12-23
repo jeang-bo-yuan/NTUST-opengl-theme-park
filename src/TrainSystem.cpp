@@ -240,10 +240,11 @@ TrainSystem::TrainSystem()
     m_wood_cube(":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg"),
     m_unit_box_VAO(1.f),
     m_train_pos(0, 0, 0), m_trainU(0.f),
-    m_train_model("asset/model/train/train.obj"),
-    m_train2_model("asset/model/train/train2.obj"),
+    m_train_models{ Model("asset/model/train/train.obj"), Model("asset/model/train/train1.obj"), Model("asset/model/train/train2.obj"),
+                   Model("asset/model/train/train3.obj"), Model("asset/model/train/train4.obj"), Model("asset/model/train/train5.obj")},
+    m_which_train(0),
     m_train_shader("shader/train.vert", nullptr, nullptr, nullptr, "shader/train.frag"),
-    m_is_vertical_move(false), m_please_update_arc_len_accum(true), m_which_train(false)
+    m_is_vertical_move(false), m_please_update_arc_len_accum(true)
 {
     glUseProgram(m_wood_shader.Program);
     glUniform1i(glGetUniformLocation(m_wood_shader.Program, "wood"), 0);
@@ -271,7 +272,7 @@ void TrainSystem::updateTrainPos(float distance)
     set_equation(cp_id, pos_eq, orient_eq);
     m_train_pos = pos_eq(m_trainU - cp_id);
 
-    if (distance > 0) m_which_train = !m_which_train;
+    if (distance > 0) m_which_train = (m_which_train + 1) % 6;
 }
 
 // Draw //////////////////////////////////////////////////////////////////////////////////////////
@@ -585,10 +586,7 @@ void TrainSystem::draw_train_with_shader()
     glUniform3fv(glGetUniformLocation(m_train_shader.Program, "LEFT"), 1, glm::value_ptr(LEFT));
     glUniform3fv(glGetUniformLocation(m_train_shader.Program, "TOP"), 1, glm::value_ptr(TOP));
 
-    if (m_which_train == false)
-        m_train_model.draw();
-    else
-        m_train2_model.draw();
+    m_train_models[m_which_train].draw();
 
     glUseProgram(0);
 }
