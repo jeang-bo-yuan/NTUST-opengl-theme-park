@@ -63,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Misc
     connect(ui->checkBoxWireframe, &QCheckBox::toggled, ui->view, &ViewWidget::toggle_wireframe);
+    connect(ui->radioNoProcess, &QRadioButton::clicked, this, [this]() { ui->view->set_post_process_type(PostProcessor::Type::NoProcess); });
+    connect(ui->radioPixelization, &QRadioButton::clicked, this, [this]() { ui->view->set_post_process_type(PostProcessor::Type::Pixelization); });
 }
 
 MainWindow::~MainWindow()

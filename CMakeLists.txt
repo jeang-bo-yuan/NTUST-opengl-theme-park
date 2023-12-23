@@ -60,6 +60,7 @@ add_executable(theme_park
     src/main.cpp
     src/MainWindow.h src/MainWindow.cpp src/MainWindow.ui
     src/ParamEquation.h src/ParamEquation.cpp
+    src/PostProcessor.h src/PostProcessor.cpp
     src/Skybox.h src/Skybox.cpp
     src/TrainSystem.h src/TrainSystem.cpp
     src/ViewWidget.h src/ViewWidget.cpp

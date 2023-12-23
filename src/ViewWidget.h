@@ -23,6 +23,7 @@
 #include "TrainSystem.h"
 #include "Water.h"
 #include "Island.h"
+#include "PostProcessor.h"
 
 class ViewWidget : public QOpenGLWidget
 {
@@ -54,7 +55,11 @@ private:
     std::unique_ptr<TrainSystem> m_train_obj_p;
     float m_train_speed; ///< 火車的速度
 
+    // island
     std::unique_ptr<Island> m_island_obj_p;
+
+    // post processor
+    std::unique_ptr<PostProcessor> m_post_processor_p;
 
     /// 每隔一段時間就updata一次
     QTimer m_timer;
@@ -122,6 +127,8 @@ public slots:
     void toggle_wireframe(bool on);
 
     void toggle_tracking_train(bool on) { m_tracking_train = on; }
+
+    void set_post_process_type(PostProcessor::Type type);
 
 signals:
     /// 轉發TrainSystem的signal。

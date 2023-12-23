@@ -137,10 +137,17 @@ void ViewWidget::initializeGL()
 
 void ViewWidget::resizeGL(int w, int h)
 {
+    // update projection matrix
     m_proj_matrix = glm::perspective<float>(glm::radians(50.f), (float)w / h, 0.1f, 200.f);
     m_matrices_UBO_p->BufferSubData(sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(m_proj_matrix));
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(glm::value_ptr(m_proj_matrix));
+
+    // update post processor's buffer size
+    if (m_post_processor_p == nullptr)
+        m_post_processor_p = std::make_unique<PostProcessor>(w, h);
+    else
+        m_post_processor_p->resize(w, h);
 }
 
 void ViewWidget::paintGL()
@@ -157,10 +164,14 @@ void ViewWidget::paintGL()
     m_matrices_UBO_p->bind_to(0);
     m_light_UBO_p->bind_to(1);
 
+    m_post_processor_p->prepare();
+
     m_skybox_obj_p->draw(m_wireframe_mode);
     m_water_obj_p->draw(m_wireframe_mode);
     m_train_obj_p->draw(m_wireframe_mode);
     m_island_obj_p->draw(m_wireframe_mode);
+
+    m_post_processor_p->start_post_process();
 }
 
 // Mouse Event ////////////////////////////////////////////////////////////////////////
@@ -283,5 +294,11 @@ void ViewWidget::keyReleaseEvent(QKeyEvent *e)
 
 void ViewWidget::toggle_wireframe(bool on) {
     m_wireframe_mode = on;
+}
+
+void ViewWidget::set_post_process_type(PostProcessor::Type type) {
+    this->makeCurrent();
+    m_post_processor_p->changeType(type);
+    this->doneCurrent();
 }
 
