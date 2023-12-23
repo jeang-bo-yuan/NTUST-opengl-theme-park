@@ -5,7 +5,10 @@
 #include "VAO_Interface.h"
 
 /**
- * @brief 從(-1, -1) ~ (1, 1)的2D平面
+ * @brief 從(-1, -1) ~ (1, 1)的2D平面，對應到NDC座標中的整個viewport
+ * @details 提供的Attribute:
+ * - (location = 0) vec2 aPosition
+ * - (location = 1) vec2 aTexcoord
  */
 class Plane_VAO : public VAO_Interface {
     GLuint m_vbo;
