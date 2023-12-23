@@ -56,7 +56,14 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, aiMatrix4x4 transfor
     std::vector<unsigned int> indices;
     std::vector<Mesh::Texture> diffuse;
     std::vector<Mesh::Texture> specular;
+    Mesh::Color_Set            color_set;
 
+    for (int i = 0; i < AI_MAX_NUMBER_OF_COLOR_SETS; ++i) {
+        if (!mesh->HasVertexColors(i)) break;
+        color_set.emplace_back(); // 每有一個color set就多一個空vector
+    }
+
+    // 對於每個vertex
     for(unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         Mesh::Vertex vertex;
@@ -80,16 +87,16 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, aiMatrix4x4 transfor
         else
             vertex.aTexcoord = glm::vec2(0.0f, 0.0f);
 
-        // 如果有vertex color則使用第0個color set
-        if (mesh->HasVertexColors(0))
-        {
-            vertex.aColor.r = mesh->mColors[0][i].r;
-            vertex.aColor.g = mesh->mColors[0][i].g;
-            vertex.aColor.b = mesh->mColors[0][i].b;
-            vertex.aColor.a = mesh->mColors[0][i].a;
+        // 對於每個color set
+        for (int set_id = 0; set_id < color_set.size(); ++set_id) {
+            glm::vec4 color;
+            color.r = mesh->mColors[set_id][i].r;
+            color.g = mesh->mColors[set_id][i].g;
+            color.b = mesh->mColors[set_id][i].b;
+            color.a = mesh->mColors[set_id][i].a;
+
+            color_set[set_id].emplace_back(color);
         }
-        else
-            vertex.aColor = glm::vec4(1, 1, 1, 1);
 
         vertices.emplace_back(vertex);
     }
@@ -110,7 +117,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, aiMatrix4x4 transfor
         specular = loadMaterialTextures(material, aiTextureType_SPECULAR);
     }
 
-    return Mesh(vertices, indices, diffuse, specular);
+    return Mesh(vertices, indices, diffuse, specular, color_set);
 }
 
 std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type)

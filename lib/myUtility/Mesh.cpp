@@ -6,9 +6,11 @@
 Mesh::Mesh(const std::vector<Vertex> &vertices,
            const std::vector<unsigned int> &indices,
            const std::vector<Texture> &diffuse_textures,
-           const std::vector<Texture> &specular_textures)
-    : m_vertices(vertices), m_indices(indices), m_diffuse(diffuse_textures), m_specular(specular_textures)
+           const std::vector<Texture> &specular_textures, const Color_Set &colors)
+    : m_vertices(vertices), m_indices(indices), m_diffuse(diffuse_textures), m_specular(specular_textures),
+    m_colors(colors), m_Color_VBOs{0}
 {
+    assert(m_colors.size() <= AI_MAX_NUMBER_OF_COLOR_SETS);
     setupMesh();
 }
 
@@ -17,7 +19,9 @@ Mesh::Mesh(Mesh &&rvalue)
     m_diffuse(std::move(rvalue.m_diffuse)), m_specular(std::move(rvalue.m_specular)),
     m_VAO(std::exchange(rvalue.m_VAO, 0)), m_VBO(std::exchange(rvalue.m_VBO, 0)), m_EBO(std::exchange(rvalue.m_EBO, 0))
 {
-
+    for (int i = 0; i < AI_MAX_NUMBER_OF_COLOR_SETS; ++i) {
+        m_Color_VBOs[i] = std::exchange(rvalue.m_Color_VBOs[i], 0);
+    }
 }
 
 Mesh::~Mesh()
@@ -27,6 +31,8 @@ Mesh::~Mesh()
         glDeleteVertexArrays(1, &m_VAO);
         glDeleteBuffers(1, &m_VBO);
         glDeleteBuffers(1, &m_EBO);
+
+        glDeleteBuffers(m_colors.size(), m_Color_VBOs);
     }
 }
 
@@ -85,9 +91,16 @@ void Mesh::setupMesh()
     // 2 -> aNormal
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Mesh::Vertex, aNormal));
     glEnableVertexAttribArray(2);
-    // 3 -> aColor
-    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Mesh::Vertex, aColor));
-    glEnableVertexAttribArray(3);
+
+
+    // color
+    glGenBuffers(m_colors.size(), m_Color_VBOs);
+    for (int i = 0; i < m_colors.size(); ++i) {
+        glBindBuffer(GL_ARRAY_BUFFER, m_Color_VBOs[i]);
+        glBufferData(GL_ARRAY_BUFFER, m_colors[i].size() * sizeof(m_colors[i][0]), m_colors[i].data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(3 + i, 4, GL_FLOAT, GL_FALSE, /*stride*/0, /*offset*/(void*)0);
+        glEnableVertexAttribArray(3 + i);
+    }
 
 
     // set up EBO
