@@ -240,8 +240,8 @@ TrainSystem::TrainSystem()
     m_wood_cube(":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg"),
     m_unit_box_VAO(1.f),
     m_train_pos(0, 0, 0), m_trainU(0.f),
-    m_train_models{ Model("asset/model/train/train.obj"), Model("asset/model/train/train1.obj"), Model("asset/model/train/train2.obj"),
-                   Model("asset/model/train/train3.obj"), Model("asset/model/train/train4.obj"), Model("asset/model/train/train5.obj")},
+    m_train_models{ Model("asset/model/train/train.fbx"), Model("asset/model/train/train1.fbx"), Model("asset/model/train/train2.fbx"),
+                   Model("asset/model/train/train3.fbx"), Model("asset/model/train/train4.fbx"), Model("asset/model/train/train5.fbx")},
     m_which_train(0),
     m_train_shader("shader/train.vert", nullptr, nullptr, nullptr, "shader/train.frag"),
     m_is_vertical_move(false), m_please_update_arc_len_accum(true)
