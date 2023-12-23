@@ -145,6 +145,13 @@ public:
     /// 取得控制點的個數
     int get_cp_num() const { return m_control_points.size(); }
 
+    /// 增加一個車廂
+    void add_cart() { ++m_cart_num; }
+    /// 刪除一個車廂
+    void delete_cart() { m_cart_num = (m_cart_num > 0 ? m_cart_num - 1 : 0); }
+    /// 清除全部車廂
+    void clear_cart() { m_cart_num = 0; }
+
     /// 畫出來
     /// @param wireframe - 是否是wireframe
     void draw(bool wireframe);
@@ -204,7 +211,10 @@ private:
     glm::vec3 m_train_pos; ///!< 火車在哪
     float m_trainU; ///< 火車在參數空間的哪裡
     Model m_train_models[6]; ///< 火車模型
-    int m_which_train;
+    Model m_cart_models[6];  ///< 車廂模型
+    int m_which_train; ///< 6種火車模型，每一個的輪子都轉動不同的角度，連續切換可形成轉動的效果
+    int m_cart_num; ///< 車廂數量
+
     Shader m_train_shader;  ///< 繪製火車的shader
 
     bool m_is_vertical_move; ///< 是否鉛直移動 control point

@@ -229,21 +229,29 @@ void TrainSystem::set_orient_for_selected_CP(float alpha, float beta)
 // Ctor /////////////////////////////////////////////////////////////////////////////////////////
 
 TrainSystem::TrainSystem()
+    // 控制點初始化
     : m_control_points{{glm::vec3(2, 1, 0), glm::vec3(0, 1, 0)},
                        {glm::vec3(0, 1, 2), glm::vec3(0, 1, 0)},
                        {glm::vec3(-2, 1, 0), glm::vec3(0, 1, 0)},
                        {glm::vec3(0, 1, -2), glm::vec3(0, 1, 0)}},
     m_selected_control_point(-1),
+    // line type初始化
     m_line_type(SplineType::LINEAR), m_cardinal_tension(0.5f),
     m_Arc_Len_Accum(),
+    // 木頭支柱初始化
     m_wood_shader("shader/wood.vert", nullptr, nullptr, nullptr, "shader/wood.frag"),
     m_wood_cube(":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg", ":/wood.jpg"),
     m_unit_box_VAO(1.f),
+    // 位置初始化
     m_train_pos(0, 0, 0), m_trainU(0.f),
+    // 車子模型初始化
     m_train_models{ Model("asset/model/train/train.fbx"), Model("asset/model/train/train1.fbx"), Model("asset/model/train/train2.fbx"),
                    Model("asset/model/train/train3.fbx"), Model("asset/model/train/train4.fbx"), Model("asset/model/train/train5.fbx")},
-    m_which_train(0),
+    m_cart_models{ Model("asset/model/cart/cart.fbx"), Model("asset/model/cart/cart1.fbx"), Model("asset/model/cart/cart2.fbx"),
+                   Model("asset/model/cart/cart3.fbx"), Model("asset/model/cart/cart4.fbx"), Model("asset/model/cart/cart5.fbx")},
+    m_which_train(0), m_cart_num(0),
     m_train_shader("shader/train.vert", nullptr, nullptr, nullptr, "shader/train.frag"),
+    // flag 初始化
     m_is_vertical_move(false), m_please_update_arc_len_accum(true)
 {
     glUseProgram(m_wood_shader.Program);
@@ -568,25 +576,37 @@ void TrainSystem::draw_sleeper() const
 void TrainSystem::draw_train_with_shader()
 {
     m_train_shader.Use();
-    glUniform1f(glGetUniformLocation(m_train_shader.Program, "scale"), CONTROL_POINT_SIZE);
+    glUniform1f(glGetUniformLocation(m_train_shader.Program, "scale"), 1.5f * CONTROL_POINT_SIZE);
 
-    glUniform3fv(glGetUniformLocation(m_train_shader.Program, "translate"), 1, glm::value_ptr(m_train_pos));
+    float S = T_to_S(m_trainU);
 
-    // calc FRONT, LEFT, TOP
-    int cp_id = floor(m_trainU);
-    float T = m_trainU - cp_id;
-    Draw::Param_Equation point_eq, orient_eq;
-    this->set_equation(cp_id, point_eq, orient_eq);
+    for (int i = 0; i <= m_cart_num; ++i) { // i=0 -> 畫車頭； i>0 -> 畫車廂
+        float U = S_to_T(S); // 整個參數空間的位置
+        int cp_id = floor(U);
+        float T = U - cp_id; // 兩control point間 參數空間的位置
 
-    glm::vec3 FRONT = glm::normalize(point_eq(T + 0.001) - point_eq(T));
-    glm::vec3 LEFT = glm::normalize(glm::cross(orient_eq(T), FRONT));
-    glm::vec3 TOP = glm::normalize(glm::cross(FRONT, LEFT));
+        Draw::Param_Equation point_eq, orient_eq;
+        this->set_equation(cp_id, point_eq, orient_eq);
 
-    glUniform3fv(glGetUniformLocation(m_train_shader.Program, "FRONT"), 1, glm::value_ptr(FRONT));
-    glUniform3fv(glGetUniformLocation(m_train_shader.Program, "LEFT"), 1, glm::value_ptr(LEFT));
-    glUniform3fv(glGetUniformLocation(m_train_shader.Program, "TOP"), 1, glm::value_ptr(TOP));
+        // 位置
+        glm::vec3 pos = point_eq(T);
+        glUniform3fv(glGetUniformLocation(m_train_shader.Program, "translate"), 1, glm::value_ptr(pos));
 
-    m_train_models[m_which_train].draw();
+        // 計算面向的方向
+        glm::vec3 FRONT = glm::normalize(point_eq(T + 0.001) - point_eq(T));
+        glm::vec3 LEFT = glm::normalize(glm::cross(orient_eq(T), FRONT));
+        glm::vec3 TOP = glm::normalize(glm::cross(FRONT, LEFT));
+        glUniform3fv(glGetUniformLocation(m_train_shader.Program, "FRONT"), 1, glm::value_ptr(FRONT));
+        glUniform3fv(glGetUniformLocation(m_train_shader.Program, "LEFT"), 1, glm::value_ptr(LEFT));
+        glUniform3fv(glGetUniformLocation(m_train_shader.Program, "TOP"), 1, glm::value_ptr(TOP));
+
+        if (i == 0)
+            m_train_models[m_which_train].draw();
+        else
+            m_cart_models[m_which_train].draw();
+
+        S -= 5 * CONTROL_POINT_SIZE;
+    }
 
     glUseProgram(0);
 }

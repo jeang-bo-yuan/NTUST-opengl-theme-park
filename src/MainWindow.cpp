@@ -57,6 +57,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Train: 火車
     connect(ui->checkBoxTrackingTrain, &QCheckBox::toggled, ui->view, &ViewWidget::toggle_tracking_train);
+    connect(ui->buttonAddCart, &QPushButton::clicked, this, [this]() { ui->view->get_train().add_cart(); });
+    connect(ui->buttonDeleteCart, &QPushButton::clicked, this, [this]() { ui->view->get_train().delete_cart(); });
+    connect(ui->buttonClearCart, &QPushButton::clicked, this, [this]() { ui->view->get_train().clear_cart(); });
 
     // Misc
     connect(ui->checkBoxWireframe, &QCheckBox::toggled, ui->view, &ViewWidget::toggle_wireframe);

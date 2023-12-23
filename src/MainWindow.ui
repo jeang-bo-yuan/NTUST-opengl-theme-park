@@ -133,8 +133,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>254</width>
-             <height>493</height>
+             <width>237</width>
+             <height>507</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -355,8 +355,15 @@
               <property name="title">
                <string>火車</string>
               </property>
-              <layout class="QGridLayout" name="gridLayout_3">
-               <item row="0" column="1">
+              <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,1,2">
+               <item row="3" column="2">
+                <widget class="QCheckBox" name="checkBoxTrackingTrain">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
                 <widget class="QLabel" name="labelSpeed">
                  <property name="text">
                   <string>50</string>
@@ -366,10 +373,10 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="2">
+               <item row="2" column="2">
                 <widget class="QSlider" name="sliderSpeed">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
@@ -385,24 +392,56 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
+               <item row="3" column="0" colspan="2">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>追蹤</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
                 <widget class="QLabel" name="label_5">
                  <property name="text">
                   <string>Speed</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="2">
-                <widget class="QCheckBox" name="checkBoxTrackingTrain">
+               <item row="0" column="2">
+                <widget class="QPushButton" name="buttonDeleteCart">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="text">
-                  <string/>
+                  <string>刪除</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" colspan="2">
+                <widget class="QPushButton" name="buttonAddCart">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>新增</string>
                  </property>
                 </widget>
                </item>
                <item row="1" column="0" colspan="2">
-                <widget class="QLabel" name="label_6">
+                <widget class="QPushButton" name="buttonClearCart">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="text">
-                  <string>追蹤</string>
+                  <string>清空</string>
                  </property>
                 </widget>
                </item>
