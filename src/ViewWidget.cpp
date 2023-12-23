@@ -27,7 +27,7 @@ MessageCallback( GLenum source,
 ViewWidget::ViewWidget(QWidget *parent)
     : QOpenGLWidget(parent),
     m_arc_ball(glm::vec3(0, 0, 0), 10, glm::radians(45.f), glm::radians(20.f)),
-    m_old_arc_ball(m_arc_ball), m_start_drag_point(), m_train_speed(0.1), m_wireframe_mode(false)
+    m_old_arc_ball(m_arc_ball), m_start_drag_point(), m_train_speed(0.1), m_wireframe_mode(false), m_tracking_train(false)
 {
     this->setFocusPolicy(Qt::StrongFocus);
 }
@@ -147,6 +147,11 @@ void ViewWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_train_obj_p->updateTrainPos(m_train_speed);
+
+    if (m_tracking_train) {
+        m_arc_ball.set_center(m_train_obj_p->getTrainPos());
+        this->update_view_from_arc_ball();
+    }
 
     // bind UBO
     m_matrices_UBO_p->bind_to(0);

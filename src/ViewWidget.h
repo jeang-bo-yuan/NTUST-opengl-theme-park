@@ -62,6 +62,9 @@ private:
     /// 是否繪製wireframe
     bool m_wireframe_mode;
 
+    /// 是否追蹤火車
+    bool m_tracking_train;
+
 public:
     explicit ViewWidget(QWidget* parent = nullptr);
     ~ViewWidget();
@@ -117,6 +120,8 @@ public slots:
     void set_train_speed(int speed) { m_train_speed = (float)speed / 500; }
 
     void toggle_wireframe(bool on);
+
+    void toggle_tracking_train(bool on) { m_tracking_train = on; }
 
 signals:
     /// 轉發TrainSystem的signal。

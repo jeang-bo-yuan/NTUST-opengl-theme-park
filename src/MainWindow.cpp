@@ -55,6 +55,9 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->view->get_train().set_line_type(SplineType::CARDINAL);
     });
 
+    // Train: 火車
+    connect(ui->checkBoxTrackingTrain, &QCheckBox::toggled, ui->view, &ViewWidget::toggle_tracking_train);
+
     // Misc
     connect(ui->checkBoxWireframe, &QCheckBox::toggled, ui->view, &ViewWidget::toggle_wireframe);
 }
