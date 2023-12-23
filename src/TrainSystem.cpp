@@ -581,6 +581,8 @@ void TrainSystem::draw_train_with_shader()
     float S = T_to_S(m_trainU);
 
     for (int i = 0; i <= m_cart_num; ++i) { // i=0 -> 畫車頭； i>0 -> 畫車廂
+        glUniform1i(glGetUniformLocation(m_train_shader.Program, "index"), i);
+
         float U = S_to_T(S); // 整個參數空間的位置
         int cp_id = floor(U);
         float T = U - cp_id; // 兩control point間 參數空間的位置
