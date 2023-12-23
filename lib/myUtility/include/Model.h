@@ -43,10 +43,12 @@ private:
     void loadModel(const char* path);
 
     /// 遞迴的處理scene中的每個節點
-    void processNode(aiNode *node, const aiScene *scene);
+    /// @param transform - parent node's transform
+    void processNode(aiNode *node, const aiScene *scene, aiMatrix4x4 transform);
 
     /// 處理Mesh
-    Mesh processMesh(aiMesh *mesh, const aiScene *scene);
+    /// @param transform - 轉置矩陣
+    Mesh processMesh(aiMesh *mesh, const aiScene *scene, aiMatrix4x4 transform);
 
     /// 載入Texture
     std::vector<Mesh::Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type);

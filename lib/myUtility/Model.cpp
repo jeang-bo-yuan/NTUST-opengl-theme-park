@@ -30,25 +30,27 @@ void Model::loadModel(const char* path)
     else
         m_directory = File.substr(0, where_is_slash + 1);
 
-    processNode(scene->mRootNode, scene);
+    processNode(scene->mRootNode, scene, aiMatrix4x4());
 }
 
-void Model::processNode(aiNode *node, const aiScene *scene)
+void Model::processNode(aiNode *node, const aiScene *scene, aiMatrix4x4 transform)
 {
+    aiMatrix4x4 my_transform = node->mTransformation * transform;
+
     // process all the node's meshes (if any)
     for(unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        m_meshes.emplace_back(std::move(processMesh(mesh, scene)));
+        m_meshes.emplace_back(std::move(processMesh(mesh, scene, my_transform)));
     }
     // then do the same for each of its children
     for(unsigned int i = 0; i < node->mNumChildren; i++)
     {
-        processNode(node->mChildren[i], scene);
+        processNode(node->mChildren[i], scene, my_transform);
     }
 }
 
-Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
+Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, aiMatrix4x4 transform)
 {
     std::vector<Mesh::Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -59,9 +61,10 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
     {
         Mesh::Vertex vertex;
         // process vertex positions, normals and texture coordinates
-        vertex.aPosition.x = mesh->mVertices[i].x;
-        vertex.aPosition.y = mesh->mVertices[i].y;
-        vertex.aPosition.z = mesh->mVertices[i].z;
+        aiVector3D position = transform * mesh->mVertices[i];
+        vertex.aPosition.x = position.x;
+        vertex.aPosition.y = position.y;
+        vertex.aPosition.z = position.z;
 
         vertex.aNormal.x = mesh->mNormals[i].x;
         vertex.aNormal.y = mesh->mNormals[i].y;
@@ -77,14 +80,14 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         else
             vertex.aTexcoord = glm::vec2(0.0f, 0.0f);
 
-        // 如果有vertex color則複製
-        if (mesh->HasVertexColors(i))
+        // 如果有vertex color則使用第0個color set
+        if (mesh->HasVertexColors(0))
         {
             std::cout << "There is color" << std::endl;
-            vertex.aColor.r = mesh->mColors[i]->r;
-            vertex.aColor.g = mesh->mColors[i]->g;
-            vertex.aColor.b = mesh->mColors[i]->b;
-            vertex.aColor.a = mesh->mColors[i]->a;
+            vertex.aColor.r = mesh->mColors[0][i].r;
+            vertex.aColor.g = mesh->mColors[0][i].g;
+            vertex.aColor.b = mesh->mColors[0][i].b;
+            vertex.aColor.a = mesh->mColors[0][i].a;
         }
         else
             vertex.aColor = glm::vec4(1, 1, 1, 1);
