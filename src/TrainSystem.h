@@ -11,6 +11,7 @@
 #include <Shader.h>
 #include <Model.h>
 #include "ParamEquation.h"
+#include "ControlPoint_VAO.h"
 
 /// 控制點
 struct ControlPoint {
@@ -158,7 +159,7 @@ public:
 
 private:
     /// 畫控制點
-    void draw_control_points(bool transparent);
+    void draw_control_points_with_shader(bool transparent);
 
     /// 畫出木頭支柱
     void draw_wood_with_shader();
@@ -197,6 +198,8 @@ signals:
 private:
     std::vector<ControlPoint> m_control_points; ///< 所有控制點
     int m_selected_control_point;  ///< 選中的控制點
+    ControlPoint_VAO m_control_point_VAO; ///< 控制點的VAO
+    Shader m_control_point_shader;   ///< 控制點的shader
 
     SplineType m_line_type; ///< 線的型式
     float m_cardinal_tension;  ///< tension for cardinal spline

@@ -3,6 +3,7 @@
 #include <glad/gl.h>
 #include <glm/trigonometric.hpp>
 #include <glm/geometric.hpp>
+#include <glm/ext/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -234,7 +235,8 @@ TrainSystem::TrainSystem()
                        {glm::vec3(0, 1, 2), glm::vec3(0, 1, 0)},
                        {glm::vec3(-2, 1, 0), glm::vec3(0, 1, 0)},
                        {glm::vec3(0, 1, -2), glm::vec3(0, 1, 0)}},
-    m_selected_control_point(-1),
+    m_selected_control_point(-1), m_control_point_VAO(CONTROL_POINT_SIZE),
+    m_control_point_shader("shader/control_point.vert", nullptr, nullptr, nullptr, "shader/control_point.frag"),
     // line type初始化
     m_line_type(SplineType::LINEAR), m_cardinal_tension(0.5f),
     m_Arc_Len_Accum(),
@@ -296,7 +298,7 @@ void TrainSystem::draw(bool wireframe)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
-    this->draw_control_points(false);
+    this->draw_control_points_with_shader(false);
     this->draw_wood_with_shader();
     this->draw_line();
     this->draw_sleeper();
@@ -304,12 +306,11 @@ void TrainSystem::draw(bool wireframe)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     if (wireframe)
-        this->draw_control_points(true); // 畫一個透明的控制點
+        this->draw_control_points_with_shader(true); // 畫一個透明的控制點
 }
 
-void TrainSystem::draw_control_points(bool transparent)
+void TrainSystem::draw_control_points_with_shader(bool transparent)
 {
-    glMatrixMode(GL_MODELVIEW);
     if (transparent) {
         glEnable(GL_BLEND);
         glBlendFunc(GL_ZERO, GL_ONE);
@@ -319,68 +320,27 @@ void TrainSystem::draw_control_points(bool transparent)
         const glm::vec3& pos = m_control_points[i].pos;
         const glm::vec3& orient = m_control_points[i].orient;
 
-        float size = CONTROL_POINT_SIZE;
+        m_control_point_shader.Use();
 
-        if (i == m_selected_control_point)
-            glColor3ub(255, 0, 0);
-        else
-            glColor3ub(255, 255, 255);
+        glm::mat4 model_matrix;
+        model_matrix = glm::identity<glm::mat4>();
+        model_matrix = glm::translate(model_matrix, pos);
+        float theta1 = -atan2(orient.z,orient.x);
+        model_matrix = glm::rotate(model_matrix, theta1, glm::vec3(0, 1, 0));
+        float theta2 = -acos(orient.y);
+        model_matrix = glm::rotate(model_matrix, theta2, glm::vec3(0, 0, 1));
+        glUniformMatrix4fv(
+            glGetUniformLocation(m_control_point_shader.Program, "model_matrix"),
+            1,
+            false, // no transpose
+            glm::value_ptr(model_matrix)
+        );
 
-        glPushMatrix();
-        glTranslatef(pos.x,pos.y,pos.z);
-        float theta1 = -glm::degrees(atan2(orient.z,orient.x));
-        glRotatef(theta1,0,1,0);
-        float theta2 = -glm::degrees(acos(orient.y));
-        glRotatef(theta2,0,0,1);
+        glUniform1i(glGetUniformLocation(m_control_point_shader.Program, "is_selected"), i == m_selected_control_point);
 
-        glBegin(GL_QUADS);
-        glNormal3f( 0,0,1);
-        glVertex3f( size, size, size);
-        glVertex3f(-size, size, size);
-        glVertex3f(-size,-size, size);
-        glVertex3f( size,-size, size);
+        m_control_point_VAO.draw();
 
-        glNormal3f( 0, 0, -1);
-        glVertex3f( size, size, -size);
-        glVertex3f( size,-size, -size);
-        glVertex3f(-size,-size, -size);
-        glVertex3f(-size, size, -size);
-
-        // no top - it will be the point
-
-        glNormal3f( 0,-1,0);
-        glVertex3f( size,-size, size);
-        glVertex3f(-size,-size, size);
-        glVertex3f(-size,-size,-size);
-        glVertex3f( size,-size,-size);
-
-        glNormal3f( 1,0,0);
-        glVertex3f( size, size, size);
-        glVertex3f( size,-size, size);
-        glVertex3f( size,-size,-size);
-        glVertex3f( size, size,-size);
-
-        glNormal3f(-1,0,0);
-        glVertex3f(-size, size, size);
-        glVertex3f(-size, size,-size);
-        glVertex3f(-size,-size,-size);
-        glVertex3f(-size,-size, size);
-        glEnd();
-        glBegin(GL_TRIANGLE_FAN);
-        glNormal3f(0,1.0f,0);
-        glVertex3f(0,3.0f*size,0);
-        glNormal3f( 1.0f, 0.0f , 1.0f);
-        glVertex3f( size, size , size);
-        glNormal3f(-1.0f, 0.0f , 1.0f);
-        glVertex3f(-size, size , size);
-        glNormal3f(-1.0f, 0.0f ,-1.0f);
-        glVertex3f(-size, size ,-size);
-        glNormal3f( 1.0f, 0.0f ,-1.0f);
-        glVertex3f( size, size ,-size);
-        glNormal3f( 1.0f, 0.0f , 1.0f);
-        glVertex3f( size, size , size);
-        glEnd();
-        glPopMatrix();
+        glUseProgram(0);
     }
 
     glDisable(GL_BLEND);
@@ -515,6 +475,7 @@ void TrainSystem::draw_sleeper() const
             0, 0, 0, 1
         };
         middle = middle + DOWN * CONTROL_POINT_SIZE * 0.05f; // 住下一點點
+        glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
         glTranslatef(middle.x, middle.y, middle.z);
         glMultMatrixf(rotate_mat);
