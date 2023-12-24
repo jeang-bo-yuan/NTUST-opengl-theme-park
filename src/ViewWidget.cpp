@@ -85,9 +85,14 @@ void ViewWidget::initializeGL()
 
     /// @todo load UBO
     m_matrices_UBO_p = std::make_unique<UBO>(2 * sizeof(glm::mat4), GL_DYNAMIC_DRAW);
+    //
     m_light_UBO_p = std::make_unique<UBO>(2 * sizeof(glm::vec4), GL_DYNAMIC_DRAW);
     m_light_UBO_p->BufferSubData(sizeof(glm::vec4), sizeof(glm::vec4), glm::value_ptr(glm::vec4(0, 5, 10, 1)));
     this->update_view_from_arc_ball();
+    //
+    m_cel_shading_p = std::make_unique<UBO>(2 * sizeof(int), GL_STATIC_DRAW);
+    int cel_option[2] = { 0, 4 };
+    m_cel_shading_p->BufferData(cel_option);
 
     /// @todo initialize drawable object
     try {
@@ -162,6 +167,7 @@ void ViewWidget::paintGL()
     // bind UBO
     m_matrices_UBO_p->bind_to(0);
     m_light_UBO_p->bind_to(1);
+    m_cel_shading_p->bind_to(2);
 
     m_post_processor_p->prepare();
 
@@ -298,6 +304,14 @@ void ViewWidget::toggle_wireframe(bool on) {
 void ViewWidget::set_post_process_type(PostProcessor::Type type) {
     this->makeCurrent();
     m_post_processor_p->changeType(type);
+    this->doneCurrent();
+}
+
+void ViewWidget::toggle_Cel_Shading(bool on)
+{
+    this->makeCurrent();
+    int value = (on ? 1 : 0);
+    m_cel_shading_p->BufferSubData(0, sizeof(int), &value);
     this->doneCurrent();
 }
 

@@ -12,6 +12,11 @@ uniform vec4 color_diffuse = vec4(0.5, 0.5, 0.5, 1.0);
 uniform vec4 color_specular = vec4(0.5, 0.5, 0.5, 1.0);
 uniform float shininess = 1000.0f;
 
+layout (std140, binding = 2) uniform Cel_Shading_Block {
+  int on;
+  int levels;
+} Cel;
+
 out vec4 FragColor;
 
 void main() {
@@ -27,6 +32,10 @@ void main() {
 
   float diffuse = max(0.0, dot(vs_normal, light_direction));
   float specular = pow(max(0.0, dot(vs_normal, half_vector)), shininess);
+  if (Cel.on == 1) {
+    diffuse = floor(diffuse * Cel.levels) / Cel.levels;
+    specular = floor(specular * Cel.levels) / Cel.levels;
+  }
 
   FragColor =  min(vs_color * color_ambient, vec4(1.0)) + diffuse * color_diffuse + specular * color_specular;
 }

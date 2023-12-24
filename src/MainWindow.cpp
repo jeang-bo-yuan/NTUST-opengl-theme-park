@@ -63,6 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Misc
     connect(ui->checkBoxWireframe, &QCheckBox::toggled, ui->view, &ViewWidget::toggle_wireframe);
+    connect(ui->checkBoxCel, &QCheckBox::toggled, ui->view, &ViewWidget::toggle_Cel_Shading);
     connect(ui->radioNoProcess, &QRadioButton::clicked, this, [this]() { ui->view->set_post_process_type(PostProcessor::Type::NoProcess); });
     connect(ui->radioPixelization, &QRadioButton::clicked, this, [this]() { ui->view->set_post_process_type(PostProcessor::Type::Pixelization); });
     connect(ui->radioGrayscale, &QRadioButton::clicked, this, [this]() { ui->view->set_post_process_type(PostProcessor::Type::Grayscale); });

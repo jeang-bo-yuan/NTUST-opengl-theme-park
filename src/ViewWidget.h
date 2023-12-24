@@ -44,6 +44,7 @@ private:
 
     /// light UBO
     std::unique_ptr<UBO> m_light_UBO_p;
+    std::unique_ptr<UBO> m_cel_shading_p; // {int: on/off, int: levels}
 
     /// skybox
     std::unique_ptr<Skybox> m_skybox_obj_p;
@@ -129,6 +130,8 @@ public slots:
     void toggle_tracking_train(bool on) { m_tracking_train = on; }
 
     void set_post_process_type(PostProcessor::Type type);
+
+    void toggle_Cel_Shading(bool on);
 
 signals:
     /// 轉發TrainSystem的signal。
