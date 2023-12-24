@@ -207,5 +207,6 @@
         <file>height_maps/198.png</file>
         <file>height_maps/199.png</file>
         <file>wood.jpg</file>
+        <file>smoke.png</file>
     </qresource>
 </RCC>

@@ -34,6 +34,9 @@ public:
 
     /// 由子類別實作，繪製圖形
     virtual void draw()=0;
+
+    /// 取得VAO的名字
+    GLuint name() { return m_VAO_id; }
 };
 
 #endif // VAO_INTERFACE_H

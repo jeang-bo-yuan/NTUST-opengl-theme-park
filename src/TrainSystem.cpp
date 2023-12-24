@@ -8,6 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <cmath>
+#include <stdlib.h>
 #include <ArcBall.h>
 
 /// Control Point的大小
@@ -252,6 +253,11 @@ TrainSystem::TrainSystem()
     m_cart_models{ Model("asset/model/cart/cart.fbx"), Model("asset/model/cart/cart1.fbx"), Model("asset/model/cart/cart2.fbx"),
                    Model("asset/model/cart/cart3.fbx"), Model("asset/model/cart/cart4.fbx"), Model("asset/model/cart/cart5.fbx")},
     m_which_train(0), m_cart_num(0),
+    // smoke
+    m_smoke_obj([](const glm::vec3& pos, unsigned TTL)->glm::vec3 {
+        return glm::vec3(pos.x, pos.y + TTL * CONTROL_POINT_SIZE * 0.02f, pos.z);
+    }, CONTROL_POINT_SIZE, ":/smoke.png"), m_smoke_counter(0),
+    // shader
     m_train_shader("shader/train.vert", nullptr, nullptr, nullptr, "shader/train.frag"),
     // flag 初始化
     m_is_vertical_move(false), m_please_update_arc_len_accum(true)
@@ -283,6 +289,9 @@ void TrainSystem::updateTrainPos(float distance)
     m_train_pos = pos_eq(m_trainU - cp_id);
 
     if (distance > 0) m_which_train = (m_which_train + 1) % 6;
+    else m_smoke_counter = 1;  // 如果火車沒有前進，則避免counter歸零，這樣draw_train時就不會加入更多的smoke
+
+    m_smoke_obj.update();
 }
 
 // Draw //////////////////////////////////////////////////////////////////////////////////////////
@@ -304,6 +313,7 @@ void TrainSystem::draw(bool wireframe)
     this->draw_sleeper();
     this->draw_train_with_shader();
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    m_smoke_obj.draw();
 
     if (wireframe)
         this->draw_control_points_with_shader(true); // 畫一個透明的控制點
@@ -569,6 +579,9 @@ void TrainSystem::draw_train_with_shader()
             m_cart_models[m_which_train].draw();
 
         S -= 5 * CONTROL_POINT_SIZE;
+
+        if (i == 0 && m_smoke_counter == 0) m_smoke_obj.add(pos + (4.1f * CONTROL_POINT_SIZE) * TOP, 25);
+        m_smoke_counter = (m_smoke_counter + 1) % 5;
     }
 
     glUseProgram(0);

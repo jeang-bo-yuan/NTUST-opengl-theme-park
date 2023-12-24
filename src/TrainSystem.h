@@ -12,6 +12,7 @@
 #include <Model.h>
 #include "ParamEquation.h"
 #include "ControlPoint_VAO.h"
+#include "Particle.h"
 
 /// 控制點
 struct ControlPoint {
@@ -217,6 +218,9 @@ private:
     Model m_cart_models[6];  ///< 車廂模型
     int m_which_train; ///< 6種火車模型，每一個的輪子都轉動不同的角度，連續切換可形成轉動的效果
     int m_cart_num; ///< 車廂數量
+
+    Particle m_smoke_obj; ///< smoke
+    int m_smoke_counter; ///< counter歸零才加smoke
 
     Shader m_train_shader;  ///< 繪製火車的shader
 

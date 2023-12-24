@@ -42,6 +42,16 @@ public:
         glBindVertexArray(0);
     }
 
+    /**
+     * @brief 用glDrawArraysInstanced繪製
+     * @param instancecount - 幾個實例（instance）
+     */
+    void drawInstanced(GLsizei instancecount) {
+        glBindVertexArray(m_VAO_id);
+        glDrawArraysInstanced(GL_QUADS, 0, 4, instancecount);
+        glBindVertexArray(0);
+    }
+
     ~Plane_VAO() {
         glDeleteBuffers(1, &m_vbo);
     }
