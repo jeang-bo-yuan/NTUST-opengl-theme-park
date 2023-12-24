@@ -12,7 +12,7 @@ layout (std140, binding = 1) uniform LightBlock {
   vec4 light_position;
 } Light;
 uniform vec4 color_ambient = vec4(0.3, 0.3, 0.3, 1.0);
-uniform vec4 color_diffuse = vec4(1, 1, 1, 1.0);
+uniform vec4 color_diffuse = vec4(0.5, 0.5, 0.5, 1.0);
 uniform vec4 color_specular = vec4(0.5, 0.5, 0.5, 1.0);
 uniform float shininess = 1000.0f;
 
