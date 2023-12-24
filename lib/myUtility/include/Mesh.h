@@ -21,11 +21,18 @@
  * - (location = 1) Vertex::aTexcoord
  * - (location = 2) Vertex::aNormal
  *
+ * ---
+ *
  * - (location = 3) color set 1
  * - (location = 4) color set 2
  * - (location = 5) color set 3
- * ...
+ * - ...
  * - (location = 10) color set 8
+ *
+ * 如果傳給建構子的colors不為空，則最多支援8個color set，並且依上面順序傳給vertex shader
+ *
+ * # Texture的綁定
+ * 見 [Design_Principle_of_Shader_VAO.md](Design_Principle_of_Shader_VAO.md)
  */
 class Mesh {
 public:
@@ -66,7 +73,7 @@ public:
     /// 呼叫 glDeleteVertexArrays 和 glDeleteBuffers
     ~Mesh();
 
-    /// 綁定貼圖並呼叫glDrawElements
+    /// 綁定VAO和貼圖並呼叫glDrawElements
     void draw();
 
 private:

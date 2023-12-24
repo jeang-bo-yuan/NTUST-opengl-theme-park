@@ -47,7 +47,7 @@ private:
     void processNode(aiNode *node, const aiScene *scene, aiMatrix4x4 transform);
 
     /// 處理Mesh
-    /// @param transform - 轉置矩陣
+    /// @param transform - 轉到世界座標的矩陣
     Mesh processMesh(aiMesh *mesh, const aiScene *scene, aiMatrix4x4 transform);
 
     /// 載入Texture
