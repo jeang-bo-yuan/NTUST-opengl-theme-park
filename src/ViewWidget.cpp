@@ -98,6 +98,8 @@ void ViewWidget::initializeGL()
         connect(m_train_obj_p.get(), &TrainSystem::is_point_selected, this, &ViewWidget::is_point_selected);
 
         m_island_obj_p = std::make_unique<Island>();
+
+        m_post_processor_p = std::make_unique<PostProcessor>(width(), height());
     }
     catch (std::exception& ex) {
         QMessageBox::critical(nullptr, "Failed", ex.what());
@@ -144,10 +146,7 @@ void ViewWidget::resizeGL(int w, int h)
     glLoadMatrixf(glm::value_ptr(m_proj_matrix));
 
     // update post processor's buffer size
-    if (m_post_processor_p == nullptr)
-        m_post_processor_p = std::make_unique<PostProcessor>(w, h);
-    else
-        m_post_processor_p->resize(w, h);
+    m_post_processor_p->resize(w, h);
 }
 
 void ViewWidget::paintGL()

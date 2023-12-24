@@ -25,7 +25,10 @@ private:
 public:
     enum class Type {
         NoProcess = 0,       // 不做後處理
-        Pixelization = 1     // 像素化
+        Pixelization = 1,    // 像素化
+        Grayscale = 2,       // 灰階
+        DepthImage = 3,      // 深度圖
+        SobelOperator = 4,   // 邊緣偵測
     };
 
 public:

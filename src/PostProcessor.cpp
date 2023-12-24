@@ -9,12 +9,17 @@ PostProcessor::PostProcessor(GLint width, GLint height)
     m_shader.Use();
     glUniform1i(glGetUniformLocation(m_shader.Program, "color_buffer"), 0);
     glUniform1i(glGetUniformLocation(m_shader.Program, "depth_buffer"), 1);
+    glUniform2i(glGetUniformLocation(m_shader.Program, "size"), width, height);
     glUseProgram(0);
 }
 
 void PostProcessor::resize(GLint width, GLint height)
 {
     m_FBO.resize(width, height);
+
+    m_shader.Use();
+    glUniform2i(glGetUniformLocation(m_shader.Program, "size"), width, height);
+    glUseProgram(0);
 }
 
 void PostProcessor::changeType(Type type)

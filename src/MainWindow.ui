@@ -495,6 +495,27 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QRadioButton" name="radioGrayscale">
+             <property name="text">
+              <string>灰階</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioDepthImage">
+             <property name="text">
+              <string>Depth Image</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioSobelOperator">
+             <property name="text">
+              <string>邊緣偵測（Sobel Operator）</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
