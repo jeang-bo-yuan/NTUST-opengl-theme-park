@@ -34,7 +34,7 @@ void main() {
 
   vs_world_pos = rotate * (scale * aPos) + translate;
   gl_Position = Matrices.proj * Matrices.view * vec4(vs_world_pos, 1);
-  vs_normal = normalize(aNormal);
+  vs_normal = normalize(rotate * aNormal);
 
   if (index == 0)
     vs_color = aColor1;
