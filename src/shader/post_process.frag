@@ -3,6 +3,7 @@ in vec2 texCoord;
 
 uniform sampler2D color_buffer;
 uniform sampler2D depth_buffer;
+uniform sampler2D noise_texture;
 uniform ivec2  size;  // size.x -> buffer width;   size.y -> buffer height
 uniform int type = 0;
 
@@ -54,6 +55,12 @@ void main () {
     vec4 G = sqrt(Gx * Gx + Gy * Gy);
 
     FragColor = vec4(G.xyz, 1);
+  }
+  // SpeedLine
+  else if (type == 5) {
+    vec4 noise = texture(noise_texture, texCoord);
+    vec4 color = texture(color_buffer, texCoord);
+    FragColor = noise * color;
   }
 
 

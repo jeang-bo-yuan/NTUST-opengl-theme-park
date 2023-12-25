@@ -208,5 +208,23 @@
         <file>height_maps/199.png</file>
         <file>wood.jpg</file>
         <file>smoke.png</file>
+        <file>speed/frame1.png</file>
+        <file>speed/frame2.png</file>
+        <file>speed/frame3.png</file>
+        <file>speed/frame4.png</file>
+        <file>speed/frame5.png</file>
+        <file>speed/frame6.png</file>
+        <file>speed/frame7.png</file>
+        <file>speed/frame8.png</file>
+        <file>speed/frame9.png</file>
+        <file>speed/frame10.png</file>
+        <file>speed/frame11.png</file>
+        <file>speed/frame12.png</file>
+        <file>speed/frame13.png</file>
+        <file>speed/frame14.png</file>
+        <file>speed/frame15.png</file>
+        <file>speed/frame16.png</file>
+        <file>speed/frame17.png</file>
+        <file>speed/frame18.png</file>
     </qresource>
 </RCC>

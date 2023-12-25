@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->radioGrayscale, &QRadioButton::clicked, this, [this]() { ui->view->set_post_process_type(PostProcessor::Type::Grayscale); });
     connect(ui->radioDepthImage, &QRadioButton::clicked, this, [this]() { ui->view->set_post_process_type(PostProcessor::Type::DepthImage); });
     connect(ui->radioSobelOperator, &QRadioButton::clicked, this, [this]() { ui->view->set_post_process_type(PostProcessor::Type::SobelOperator); });
+    connect(ui->radioSpeedLine, &QRadioButton::clicked, this, [this]() { ui->view->set_post_process_type(PostProcessor::Type::SpeedLine); });
 }
 
 MainWindow::~MainWindow()

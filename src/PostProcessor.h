@@ -8,6 +8,8 @@
 #include <FBO.h>
 #include <Shader.h>
 #include <Plane_VAO.h>
+#include <vector>
+#include <qtTextureImage2D.h>
 
 /// @brief 用來做後處理的class
 /// @details How to Use:
@@ -16,12 +18,6 @@
 /// 3. 呼叫 start_post_process() ，PostProcessor 會將呼叫 prepare() 之前的 GL_DRAW_FRAMEBUFFER_BINDING 給綁定到 GL_FRAMEBUFFER，並將自己FBO的內容畫上去
 class PostProcessor
 {
-private:
-    FBO m_FBO; ///< 自己的FBO
-    GLint m_old_FBO; ///< 呼叫 prepare() 時，將原本的 GL_DRAW_FRAMEBUFFER_BINDING 給記起來
-    Shader m_shader;  ///< shader，用來做後處理
-    Plane_VAO m_whole_screen_VAO; ///< 繪製整個螢幕
-
 public:
     enum class Type {
         NoProcess = 0,       // 不做後處理
@@ -29,7 +25,21 @@ public:
         Grayscale = 2,       // 灰階
         DepthImage = 3,      // 深度圖
         SobelOperator = 4,   // 邊緣偵測
+        SpeedLine = 5,       // 速度線
     };
+
+private:
+    Type m_type; ///< 後處理的種類
+
+    FBO m_FBO; ///< 自己的FBO
+    GLint m_old_FBO; ///< 呼叫 prepare() 時，將原本的 GL_DRAW_FRAMEBUFFER_BINDING 給記起來
+    Shader m_shader;  ///< shader，用來做後處理
+    Plane_VAO m_whole_screen_VAO; ///< 繪製整個螢幕
+
+    std::vector<qtTextureImage2D> m_speeds; ///< textures of speed line
+    int m_which_speed; ///< use which speed line texture
+
+    static constexpr int SPEED_NUM = 18; ///< m_speeds的大小
 
 public:
     /// constructor，Type預設為 PostProcessor::Type::NoProcess

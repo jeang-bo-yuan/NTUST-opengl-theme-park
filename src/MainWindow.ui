@@ -538,6 +538,13 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QRadioButton" name="radioSpeedLine">
+             <property name="text">
+              <string>速度線</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
