@@ -126,6 +126,18 @@ public:
      */
     void set_tension(float tension) { m_cardinal_tension = tension; m_please_update_arc_len_accum = true; }
 
+    /**
+     * @brief 匯入控制點
+     * @param path - 檔案路徑
+     */
+    void import_control_points(std::string path);
+
+    /**
+     * @brief 匯出控制點
+     * @param path - 檔案路徑
+     */
+    void export_control_points(std::string path) const;
+
     /// @}
 
 public:

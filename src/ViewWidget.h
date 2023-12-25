@@ -133,6 +133,10 @@ public slots:
 
     void toggle_Cel_Shading(bool on);
 
+    void import_control_points();
+
+    void export_control_points();
+
 signals:
     /// 轉發TrainSystem的signal。
     /// 見 TrainSystem::is_point_selected

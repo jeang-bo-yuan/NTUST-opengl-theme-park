@@ -46,7 +46,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <property name="movable">
        <bool>false</bool>
@@ -134,8 +134,11 @@
              <x>0</x>
              <y>0</y>
              <width>237</width>
-             <height>507</height>
+             <height>553</height>
             </rect>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
@@ -163,19 +166,6 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="2">
-                <widget class="QPushButton" name="buttonDeleteCP">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>刪除(delete)</string>
-                 </property>
-                </widget>
-               </item>
                <item row="2" column="2">
                 <widget class="QSlider" name="sliderBeta">
                  <property name="minimum">
@@ -196,26 +186,10 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_3">
+               <item row="4" column="0" colspan="2">
+                <widget class="QPushButton" name="buttonImport">
                  <property name="text">
-                  <string>仰角</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QLabel" name="labelAlpha">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>0</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  <string>從檔案匯入</string>
                  </property>
                 </widget>
                </item>
@@ -235,6 +209,20 @@
                  </property>
                 </widget>
                </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_3">
+                 <property name="text">
+                  <string>仰角</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="2">
+                <widget class="QPushButton" name="buttonExport">
+                 <property name="text">
+                  <string>匯出</string>
+                 </property>
+                </widget>
+               </item>
                <item row="0" column="0" colspan="2">
                 <widget class="QPushButton" name="buttonAddCP">
                  <property name="sizePolicy">
@@ -245,6 +233,48 @@
                  </property>
                  <property name="text">
                   <string>新增</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLabel" name="labelAlpha">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>0</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QPushButton" name="buttonDeleteCP">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>刪除(delete)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" colspan="3">
+                <widget class="Line" name="line">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>

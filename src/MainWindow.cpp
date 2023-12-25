@@ -37,7 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->buttonDeleteCP, &QPushButton::clicked, ui->view, &ViewWidget::delete_train_CP);
     connect(ui->sliderAlpha, &QSlider::valueChanged, this, &MainWindow::update_orient_for_cp);
     connect(ui->sliderBeta, &QSlider::valueChanged, this, &MainWindow::update_orient_for_cp);
-    connect(ui->sliderSpeed, &QSlider::valueChanged, ui->view, &ViewWidget::set_train_speed);
+    connect(ui->buttonExport, &QPushButton::clicked, ui->view, &ViewWidget::export_control_points);
+    connect(ui->buttonImport, &QPushButton::clicked, ui->view, &ViewWidget::import_control_points);
 
     // Train Spline
     ui->sliderTension->setFixedWidth(120);
@@ -60,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->buttonAddCart, &QPushButton::clicked, this, [this]() { ui->view->get_train().add_cart(); });
     connect(ui->buttonDeleteCart, &QPushButton::clicked, this, [this]() { ui->view->get_train().delete_cart(); });
     connect(ui->buttonClearCart, &QPushButton::clicked, this, [this]() { ui->view->get_train().clear_cart(); });
+    connect(ui->sliderSpeed, &QSlider::valueChanged, ui->view, &ViewWidget::set_train_speed);
 
     // Misc
     connect(ui->checkBoxWireframe, &QCheckBox::toggled, ui->view, &ViewWidget::toggle_wireframe);

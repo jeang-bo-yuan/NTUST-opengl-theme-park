@@ -6,7 +6,9 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <QMessageBox>
 #include <iostream>
+#include <fstream>
 #include <cmath>
 #include <stdlib.h>
 #include <ArcBall.h>
@@ -226,6 +228,53 @@ void TrainSystem::set_orient_for_selected_CP(float alpha, float beta)
     m_control_points[m_selected_control_point].orient = ball.calc_pos();
 
     m_please_update_arc_len_accum = true;
+}
+
+void TrainSystem::import_control_points(std::string path)
+{
+    std::ifstream inFile(path);
+
+    if (!inFile.is_open()) {
+        QMessageBox::critical(nullptr, "Failed", u8"無法開啟檔案");
+        return;
+    }
+
+    int num = 0;
+    inFile >> num;
+    if (num < 4) {
+        QMessageBox::critical(nullptr, "Failed", u8"檔案格式不符");
+        return;
+    }
+
+    m_control_points.resize(num);
+    for (int i = 0; i < num; ++i) {
+        ControlPoint& cp = m_control_points[i];
+        inFile >> cp.pos.x >> cp.pos.y >> cp.pos.z
+            >> cp.orient.x >> cp.orient.y >> cp.orient.z;
+    }
+
+    m_selected_control_point = -1;
+    emit is_point_selected(false);
+
+    m_please_update_arc_len_accum = true;
+}
+
+void TrainSystem::export_control_points(std::string path) const
+{
+    std::ofstream outFile(path);
+
+    if (!outFile.is_open()) {
+        QMessageBox::critical(nullptr, "Failed", u8"無法開啟檔案");
+        return;
+    }
+
+    outFile << m_control_points.size() << '\n';
+    for (auto it = m_control_points.begin(); it != m_control_points.end(); ++it) {
+        outFile << it->pos.x << ' ' << it->pos.y << ' ' << it->pos.z << ' '
+                << it->orient.x << ' ' << it->orient.y << ' ' << it->orient.z << '\n';
+    }
+
+    outFile << std::endl;
 }
 
 // Ctor /////////////////////////////////////////////////////////////////////////////////////////
