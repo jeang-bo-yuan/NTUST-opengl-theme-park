@@ -25,6 +25,27 @@
 #include "Island.h"
 #include "PostProcessor.h"
 
+/**
+ * @brief 用OpenGL繪製畫面
+ * @details
+ * ## UBOs
+ * ```
+ * layout(std140, binding = 0) uniform MatricesBlock {
+ *    uniform mat4 view;
+ *    uniform mat4 proj;
+ * } Matrices;
+ *
+ * layout (std140, binding = 1) uniform LightBlock {
+ *    vec4 eye_position;
+ *    vec4 light_position;
+ * } Light;
+ *
+ * layout (std140, binding = 2) uniform Cel_Shading_Block {
+ *    int on;
+ *    int levels;
+ * } Cel;
+ * ```
+ */
 class ViewWidget : public QOpenGLWidget
 {
     Q_OBJECT
@@ -132,6 +153,8 @@ public slots:
     void set_post_process_type(PostProcessor::Type type);
 
     void toggle_Cel_Shading(bool on);
+
+    void set_Cel_Levels(int levels);
 
     void import_control_points();
 

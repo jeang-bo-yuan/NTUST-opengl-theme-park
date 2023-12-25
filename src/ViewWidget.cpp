@@ -316,6 +316,13 @@ void ViewWidget::toggle_Cel_Shading(bool on)
     this->doneCurrent();
 }
 
+void ViewWidget::set_Cel_Levels(int levels)
+{
+    if (levels <= 0) return;
+
+    m_cel_shading_p->BufferSubData(sizeof(int), sizeof(int), &levels);
+}
+
 void ViewWidget::import_control_points()
 {
     QString path = QFileDialog::getOpenFileName(nullptr, "Import Control Points", ".", "Text (*.txt)");
