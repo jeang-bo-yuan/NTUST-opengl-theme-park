@@ -26,7 +26,7 @@ MessageCallback( GLenum source,
 
 ViewWidget::ViewWidget(QWidget *parent)
     : QOpenGLWidget(parent),
-    m_arc_ball(glm::vec3(0, 0, 0), 10, glm::radians(45.f), glm::radians(20.f)),
+    m_arc_ball(glm::vec3(0, 1, 0), 5, glm::radians(45.f), glm::radians(20.f)),
     m_old_arc_ball(m_arc_ball), m_start_drag_point(), m_train_speed(0.1), m_wireframe_mode(false), m_tracking_train(false)
 {
     this->setFocusPolicy(Qt::StrongFocus);
