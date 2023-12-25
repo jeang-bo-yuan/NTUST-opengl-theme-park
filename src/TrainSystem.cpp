@@ -288,8 +288,13 @@ void TrainSystem::updateTrainPos(float distance)
     set_equation(cp_id, pos_eq, orient_eq);
     m_train_pos = pos_eq(m_trainU - cp_id);
 
-    if (distance > 0) m_which_train = (m_which_train + 1) % 6;
-    else m_smoke_counter = 1;  // 如果火車沒有前進，則避免counter歸零，這樣draw_train時就不會加入更多的smoke
+    if (distance > 0) {
+        m_which_train = (m_which_train + 1) % 6;
+        m_smoke_counter = (m_smoke_counter + 1) % 5;
+    }
+    else {
+        m_smoke_counter = 1;  // 如果火車沒有前進，則避免counter歸零，這樣draw_train時就不會加入更多的smoke
+    }
 
     m_smoke_obj.update();
 }
@@ -581,7 +586,6 @@ void TrainSystem::draw_train_with_shader()
         S -= 5 * CONTROL_POINT_SIZE;
 
         if (i == 0 && m_smoke_counter == 0) m_smoke_obj.add(pos + (4.1f * CONTROL_POINT_SIZE) * TOP, 25);
-        m_smoke_counter = (m_smoke_counter + 1) % 5;
     }
 
     glUseProgram(0);
