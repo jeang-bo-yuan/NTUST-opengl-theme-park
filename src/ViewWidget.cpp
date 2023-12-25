@@ -319,12 +319,14 @@ void ViewWidget::toggle_Cel_Shading(bool on)
 void ViewWidget::import_control_points()
 {
     QString path = QFileDialog::getOpenFileName(nullptr, "Import Control Points", ".", "Text (*.txt)");
+    if (path.isEmpty()) return;
     m_train_obj_p->import_control_points(path.toStdString());
 }
 
 void ViewWidget::export_control_points()
 {
     QString path = QFileDialog::getSaveFileName(nullptr, "Export Control Points", ".", "Text (*.txt)");
+    if (path.isEmpty()) return;
     m_train_obj_p->export_control_points(path.toStdString());
 }
 
