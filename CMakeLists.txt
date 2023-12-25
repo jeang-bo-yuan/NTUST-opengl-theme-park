@@ -105,3 +105,36 @@ add_custom_target(copy_asset
 add_dependencies(theme_park copy_asset)
 
 
+
+# Install #####################################################################################
+
+install(TARGETS theme_park assimp
+        RUNTIME DESTINATION bin COMPONENT Final
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/shader/
+        DESTINATION bin/shader
+        COMPONENT Final
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/asset/
+        DESTINATION bin/asset
+        COMPONENT Final
+)
+
+if (WIN32)
+  add_custom_target(install_final
+    COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Final -P cmake_install.cmake
+    COMMAND windeployqt ${CMAKE_INSTALL_PREFIX}/bin/theme_park.exe
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Install theme_park executables and associated resources..."
+    VERBATIM
+  )
+else()
+  add_custom_target(install_final
+    COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Final -P cmake_install.cmake
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Install theme_park executables and associated resources..."
+    VERBATIM
+  )
+endif()
