@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->sliderBeta, &QSlider::valueChanged, this, &MainWindow::update_orient_for_cp);
     connect(ui->buttonExport, &QPushButton::clicked, ui->view, &ViewWidget::export_control_points);
     connect(ui->buttonImport, &QPushButton::clicked, ui->view, &ViewWidget::import_control_points);
+    connect(ui->buttonResetCP, &QPushButton::clicked, this, [this]() { ui->view->get_train().reset_CP(); });
 
     // Train Spline
     ui->sliderTension->setFixedWidth(120);

@@ -97,6 +97,11 @@ public:
     void delete_CP();
 
     /**
+     * @brief 重置control point的位置
+     */
+    void reset_CP();
+
+    /**
      * @brief 取得選中的control point的orient
      * @details 回傳兩個值alpha, beta。以`r=1`, `center=(0,0,0)`, `alpha=alpha`, `beta=beta`代入ArcBall後可算出實際的orient。
      * @param[out] alpha - 方位角(in radians)

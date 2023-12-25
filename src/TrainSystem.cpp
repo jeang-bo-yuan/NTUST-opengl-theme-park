@@ -203,6 +203,16 @@ void TrainSystem::delete_CP()
     m_please_update_arc_len_accum = true;
 }
 
+void TrainSystem::reset_CP()
+{
+    m_control_points.assign({{glm::vec3(2, 1, 0), glm::vec3(0, 1, 0)},
+                             {glm::vec3(0, 1, 2), glm::vec3(0, 1, 0)},
+                             {glm::vec3(-2, 1, 0), glm::vec3(0, 1, 0)},
+                             {glm::vec3(0, 1, -2), glm::vec3(0, 1, 0)}});
+
+    m_please_update_arc_len_accum = true;
+}
+
 void TrainSystem::orient_of_selected_CP(float &alpha, float &beta) const
 {
     if (nothing_is_selected()) {
@@ -281,10 +291,7 @@ void TrainSystem::export_control_points(std::string path) const
 
 TrainSystem::TrainSystem()
     // 控制點初始化
-    : m_control_points{{glm::vec3(2, 1, 0), glm::vec3(0, 1, 0)},
-                       {glm::vec3(0, 1, 2), glm::vec3(0, 1, 0)},
-                       {glm::vec3(-2, 1, 0), glm::vec3(0, 1, 0)},
-                       {glm::vec3(0, 1, -2), glm::vec3(0, 1, 0)}},
+    : m_control_points(),
     m_selected_control_point(-1), m_control_point_VAO(CONTROL_POINT_SIZE),
     m_control_point_shader("shader/control_point.vert", nullptr, nullptr, nullptr, "shader/control_point.frag"),
     // line type初始化
@@ -311,6 +318,8 @@ TrainSystem::TrainSystem()
     // flag 初始化
     m_is_vertical_move(false), m_please_update_arc_len_accum(true)
 {
+    this->reset_CP();
+
     glUseProgram(m_wood_shader.Program);
     glUniform1i(glGetUniformLocation(m_wood_shader.Program, "wood"), 0);
     glUseProgram(0);

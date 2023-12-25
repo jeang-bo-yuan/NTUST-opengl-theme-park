@@ -134,11 +134,11 @@
              <x>0</x>
              <y>0</y>
              <width>237</width>
-             <height>553</height>
+             <height>589</height>
             </rect>
            </property>
            <property name="autoFillBackground">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
@@ -153,48 +153,8 @@
                <string>控制點</string>
               </property>
               <layout class="QGridLayout" name="gridLayout" columnstretch="1,1,2">
-               <item row="1" column="2">
-                <widget class="QSlider" name="sliderAlpha">
-                 <property name="minimum">
-                  <number>-180</number>
-                 </property>
-                 <property name="maximum">
-                  <number>180</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="2">
-                <widget class="QSlider" name="sliderBeta">
-                 <property name="minimum">
-                  <number>-90</number>
-                 </property>
-                 <property name="maximum">
-                  <number>90</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_2">
-                 <property name="text">
-                  <string>方位角</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0" colspan="2">
-                <widget class="QPushButton" name="buttonImport">
-                 <property name="text">
-                  <string>從檔案匯入</string>
-                 </property>
-                </widget>
-               </item>
                <item row="2" column="1">
-                <widget class="QLabel" name="labelBeta">
+                <widget class="QLabel" name="labelAlpha">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -209,14 +169,27 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_3">
-                 <property name="text">
-                  <string>仰角</string>
+               <item row="2" column="2">
+                <widget class="QSlider" name="sliderAlpha">
+                 <property name="minimum">
+                  <number>-180</number>
+                 </property>
+                 <property name="maximum">
+                  <number>180</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="2">
+               <item row="5" column="0" colspan="2">
+                <widget class="QPushButton" name="buttonImport">
+                 <property name="text">
+                  <string>從檔案匯入</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="2">
                 <widget class="QPushButton" name="buttonExport">
                  <property name="text">
                   <string>匯出</string>
@@ -236,8 +209,8 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
-                <widget class="QLabel" name="labelAlpha">
+               <item row="3" column="1">
+                <widget class="QLabel" name="labelBeta">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -249,6 +222,33 @@
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0" colspan="3">
+                <widget class="Line" name="line">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_3">
+                 <property name="text">
+                  <string>仰角</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>方位角</string>
                  </property>
                 </widget>
                </item>
@@ -265,16 +265,23 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0" colspan="3">
-                <widget class="Line" name="line">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+               <item row="3" column="2">
+                <widget class="QSlider" name="sliderBeta">
+                 <property name="minimum">
+                  <number>-90</number>
+                 </property>
+                 <property name="maximum">
+                  <number>90</number>
                  </property>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0" colspan="3">
+                <widget class="QPushButton" name="buttonResetCP">
+                 <property name="text">
+                  <string>重置</string>
                  </property>
                 </widget>
                </item>
@@ -462,7 +469,7 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0" colspan="2">
+               <item row="1" column="0" colspan="3">
                 <widget class="QPushButton" name="buttonClearCart">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
