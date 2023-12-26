@@ -19,19 +19,20 @@ void main() {
   gl_ClipDistance[0] = 0;
   if (use_height_map) {
     vec2 TexCoord = clamp((vec2(pos.x , pos.z) + WAVE_SIZE) / (2.f * WAVE_SIZE), 0, 1);
+    float scale = 0.02;
 
     vec4 info = texture2D(height_map, TexCoord);
-    vs_world_pos = vec3(pos.x, (info.r * 0.5) - 0.5, pos.z);
+    vs_world_pos = vec3(pos.x, (info.r * scale) - 0.5, pos.z);
     gl_Position = Matrices.proj * Matrices.view * vec4(vs_world_pos, 1);
     vs_clipspace = gl_Position;
 
     float delta = 0.00005;
     // TexCoord上x加delta後，y的變化量
     float dy_x = (texture2D(height_map, TexCoord + vec2(delta, 0)) - info).r;
-    dy_x *= 0.5;
+    dy_x *= scale;
     // TexCoord上z加delta後，y的變化量
     float dy_z = (texture2D(height_map, TexCoord + vec2(0, delta)) - info).r;
-    dy_z *= 0.5;
+    dy_z *= scale;
 
     vs_normal = normalize(
       cross(vec3(0, dy_z, delta), vec3(delta, dy_x, 0))
