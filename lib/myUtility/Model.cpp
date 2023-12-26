@@ -136,6 +136,7 @@ std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextur
             std::string texture_path(m_directory + texture_file.C_Str());
 
             // 載入它
+            std::cout << (type == aiTextureType_DIFFUSE ? "Diffuse " : "Specular ");
             Mesh::Texture texture = std::make_shared<qtTextureImage2D>(texture_path.c_str());
 
             m_loaded_texture.emplace(texture_file.C_Str(), texture); // 記在map

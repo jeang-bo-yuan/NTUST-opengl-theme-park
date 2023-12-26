@@ -16,7 +16,7 @@ qtTextureImage2D::qtTextureImage2D(const QString &path)
     glBindTexture(GL_TEXTURE_2D, m_texture_id);
     glTexImage2D(GL_TEXTURE_2D, /* mipmap level */ 0, /* internal */ GL_RGBA,
                  img.width(), img.height(), /* must be zero */ 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, img.constBits());
+                 GL_RGBA, GL_UNSIGNED_BYTE, img.mirrored().constBits());
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

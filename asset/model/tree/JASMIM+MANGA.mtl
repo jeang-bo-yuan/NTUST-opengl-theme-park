@@ -1,0 +1,26 @@
+newmtl JASMIM_MANGA:_40
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd _40.png
+Ni 1.00
+Ks 0.33 0.33 0.33
+Ns 0.06
+newmtl JASMIM_MANGA:_Vegetation_Bark_Maple_1
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd _Vegetation_Bark_Maple_1.jpg
+Ni 1.00
+Ks 0.33 0.33 0.33
+Ns 0.06
+newmtl JASMIM_MANGA:formica_cinza
+illum 4
+Kd 0.40 0.40 0.40
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.33 0.33 0.33
+Ns 0.06

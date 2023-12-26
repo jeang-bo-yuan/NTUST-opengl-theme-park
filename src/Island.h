@@ -11,6 +11,7 @@ class Island
 private:
     Shader m_shader;
     Model m_model;
+    Model m_tree_model;
 
 public:
     Island();

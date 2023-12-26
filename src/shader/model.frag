@@ -1,5 +1,6 @@
 #version 430 core
 in vec4 vs_color;
+in vec2 vs_texcoord;
 in vec3 vs_normal;
 in vec3 vs_world_pos;
 
@@ -16,6 +17,9 @@ layout (std140, binding = 2) uniform Cel_Shading_Block {
   int on;
   int levels;
 } Cel;
+
+uniform bool has_texture;
+uniform sampler2D diffuse_texture;
 
 out vec4 FragColor;
 
@@ -37,5 +41,10 @@ void main() {
     specular = floor(specular * Cel.levels) / Cel.levels;
   }
 
-  FragColor =  min(vs_color * color_ambient, vec4(1.0)) + diffuse * color_diffuse + specular * color_specular;
+  if (has_texture)
+    FragColor = texture(diffuse_texture, vs_texcoord);
+  else
+    FragColor = vs_color;
+
+  FragColor =  min(FragColor * color_ambient, vec4(1.0)) + diffuse * color_diffuse + specular * color_specular;
 }
