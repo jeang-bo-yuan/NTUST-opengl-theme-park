@@ -33,7 +33,7 @@ void main() {
       // TODO: Fresnel
       vec3 eye_dir = normalize(Light.eye_position.xyz - vs_world_pos);
       float the_factor = (dot(eye_dir, vec3(0, 1, 0)));
-      FragColor = mix(reflect_color, refract_color, pow(the_factor, 2));
+      FragColor = mix(reflect_color, refract_color, the_factor);
     }
     FragColor = applyLight();
   }
