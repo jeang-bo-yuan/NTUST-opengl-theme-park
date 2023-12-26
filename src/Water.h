@@ -12,6 +12,7 @@
 #include <glm/vec3.hpp>
 #include <vector>
 #include <qtTextureImage2D.h>
+#include <FBO.h>
 
 /// water
 class Water
@@ -37,7 +38,7 @@ public:
 
     /// 畫出來
     /// @param wireframe - 水面是否用wireframe
-    void draw(bool wireframe);
+    void draw(bool wireframe, FBO& reflection, FBO& refraction);
 
     /// @brief 處理點擊事件
     /// @details 只有當|world_pos.xz| <= 5 && |world_pos.y| <= 1 才 add_drop

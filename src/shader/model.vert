@@ -7,6 +7,9 @@ layout(std140, binding = 0) uniform MatricesBlock {
   uniform mat4 view;
   uniform mat4 proj;
 } Matrices;
+layout (std140, binding = 3) uniform ClipBlock {
+  vec4 plane;
+} Clip;
 
 out vec4 vs_color;
 out vec3 vs_normal;
@@ -17,4 +20,6 @@ void main() {
   gl_Position = Matrices.proj * Matrices.view * vec4(aPosition, 1);
   vs_color = aColor;
   vs_normal = normalize(aNormal);
+
+  gl_ClipDistance[0] = dot(Clip.plane, vec4(vs_world_pos, 1));
 }

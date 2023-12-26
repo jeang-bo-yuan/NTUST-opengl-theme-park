@@ -11,6 +11,9 @@ layout (std140, binding = 1) uniform LightBlock {
   vec4 eye_position;
   vec4 light_position;
 } Light;
+layout (std140, binding = 3) uniform ClipBlock {
+  vec4 plane;
+} Clip;
 uniform float size;
 
 out vec2 vs_texcoord;
@@ -43,4 +46,6 @@ void main() {
   world_pos.xyz += aTranslate;
   gl_Position = Matrices.proj * Matrices.view * world_pos;
   vs_texcoord = aTexCoord;
+
+  gl_ClipDistance[0] = dot(Clip.plane, world_pos);
 }

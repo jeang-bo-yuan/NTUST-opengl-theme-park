@@ -21,6 +21,9 @@ layout(std140, binding = 0) uniform MatricesBlock {
   uniform mat4 view;
   uniform mat4 proj;
 } Matrices;
+layout (std140, binding = 3) uniform ClipBlock {
+  vec4 plane;
+} Clip;
 
 out vec3 vs_world_pos;
 out vec3 vs_normal;
@@ -34,6 +37,7 @@ void main() {
 
   vs_world_pos = rotate * (scale * aPos) + translate;
   gl_Position = Matrices.proj * Matrices.view * vec4(vs_world_pos, 1);
+  gl_ClipDistance[0] = dot(Clip.plane, vec4(vs_world_pos, 1));
   vs_normal = normalize(rotate * aNormal);
 
   if (index == 0)

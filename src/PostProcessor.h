@@ -59,6 +59,9 @@ public:
 
     /// 開始
     void start_post_process();
+
+    Shader& shader() { return m_shader; }
+    Plane_VAO& vao() { return m_whole_screen_VAO; }
 };
 
 #endif // POSTPROCESSOR_H

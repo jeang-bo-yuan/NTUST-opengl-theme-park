@@ -44,6 +44,10 @@
  *    int on;
  *    int levels;
  * } Cel;
+ *
+ * layout (std140, binding = 3) uniform ClipBlock {
+ *    vec4 plane;
+ * } Clip;
  * ```
  */
 class ViewWidget : public QOpenGLWidget
@@ -65,13 +69,18 @@ private:
 
     /// light UBO
     std::unique_ptr<UBO> m_light_UBO_p;
-    std::unique_ptr<UBO> m_cel_shading_p; // {int: on/off, int: levels}
+    std::unique_ptr<UBO> m_cel_shading_p; ///< {int: on/off, int: levels}
+
+    /// Clip Plane
+    std::unique_ptr<UBO> m_clip_UBO_p; ///< 內含4-tuple，同glClipPlane，但是在世界座標下的平面
 
     /// skybox
     std::unique_ptr<Skybox> m_skybox_obj_p;
 
     // water
     std::unique_ptr<Water> m_water_obj_p;
+    std::unique_ptr<FBO> m_reflection_FBO_p;
+    std::unique_ptr<FBO> m_refraction_FBO_p;
 
     // train
     std::unique_ptr<TrainSystem> m_train_obj_p;
@@ -112,6 +121,8 @@ protected:
     void resizeGL(int w, int h) override;
     /// paint opengl things
     void paintGL() override;
+    /// 畫出水以外的東西
+    void drawStuffs_without_water();
 
 
     /// mouse press -> remember where it press

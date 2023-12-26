@@ -10,5 +10,6 @@ out vec3 tex_coord;
 
 void main() {
   gl_Position = Matrices.proj * mat4(mat3(Matrices.view)) * vec4(position, 1);
+  gl_ClipDistance[0] = 0;
   tex_coord = position;
 }

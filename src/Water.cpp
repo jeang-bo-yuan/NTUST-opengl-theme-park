@@ -9,8 +9,9 @@ Water::Water()
     m_current_height_map(0), m_state(SINE_WAVE)
 {
     m_water_shader.Use();
-    glUniform1i(glGetUniformLocation(m_water_shader.Program, "skybox"), 0);
     glUniform1i(glGetUniformLocation(m_water_shader.Program, "height_map"), 0);
+    glUniform1i(glGetUniformLocation(m_water_shader.Program, "reflection_texture"), 1);
+    glUniform1i(glGetUniformLocation(m_water_shader.Program, "refraction_texture"), 2);
     glUniform1f(glGetUniformLocation(m_water_shader.Program, "WAVE_SIZE"), 5.f);
     glUniform1i(glGetUniformLocation(m_water_shader.Program, "use_height_map"), false);
 
@@ -33,7 +34,7 @@ Water::Water()
     }
 }
 
-void Water::draw(bool wireframe)
+void Water::draw(bool wireframe, FBO &reflection, FBO &refraction)
 {
     m_water_shader.Use();
 
@@ -57,6 +58,8 @@ void Water::draw(bool wireframe)
     }
 
     glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
+    reflection.bind_color_buffer(1);
+    refraction.bind_color_buffer(2);
     m_water_vao.draw();
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 

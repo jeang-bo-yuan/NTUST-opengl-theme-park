@@ -15,6 +15,7 @@ out vec3 vs_normal;
 
 
 void main() {
+  gl_ClipDistance[0] = 0;
   if (use_height_map) {
     vec2 TexCoord = clamp((vec2(pos.x , pos.z) + WAVE_SIZE) / (2.f * WAVE_SIZE), 0, 1);
 

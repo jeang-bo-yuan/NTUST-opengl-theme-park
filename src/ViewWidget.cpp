@@ -94,11 +94,15 @@ void ViewWidget::initializeGL()
     m_cel_shading_p = std::make_unique<UBO>(2 * sizeof(int), GL_STATIC_DRAW);
     int cel_option[2] = { 0, 4 };
     m_cel_shading_p->BufferData(cel_option);
+    //
+    m_clip_UBO_p = std::make_unique<UBO>(sizeof(glm::vec4), GL_DYNAMIC_DRAW);
 
     /// @todo initialize drawable object
     try {
         m_skybox_obj_p = std::make_unique<Skybox>();
         m_water_obj_p = std::make_unique<Water>();
+        m_reflection_FBO_p = std::make_unique<FBO>(width(), height());
+        m_refraction_FBO_p = std::make_unique<FBO>(width(), height());
 
         m_train_obj_p = std::make_unique<TrainSystem>();
         connect(m_train_obj_p.get(), &TrainSystem::is_point_selected, this, &ViewWidget::is_point_selected);
@@ -131,6 +135,8 @@ void ViewWidget::initializeGL()
 
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CLIP_PLANE0);
+    glEnable(GL_CLIP_DISTANCE0);
     // During init, enable debug output
     glEnable              ( GL_DEBUG_OUTPUT );
     glDebugMessageCallback( MessageCallback, 0 );
@@ -153,10 +159,14 @@ void ViewWidget::resizeGL(int w, int h)
 
     // update post processor's buffer size
     m_post_processor_p->resize(w, h);
+    m_reflection_FBO_p->resize(w, h);
+    m_refraction_FBO_p->resize(w, h);
 }
 
 void ViewWidget::paintGL()
 {
+    constexpr float  NO_CLIP[4]   = {0, 0, 0, 0}, ABOVE_WATER[4]   = {0, 1, 0, 0.5}, UNDER_WATER[4]   = {0, -1, 0, -0.5};
+    constexpr double NO_CLIP_D[4] = {0, 0, 0, 0}, ABOVE_WATER_D[4] = {0, 1, 0, 0.5}, UNDER_WATER_D[4] = {0, -1, 0, -0.5};
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_train_obj_p->updateTrainPos(m_train_speed);
 
@@ -169,15 +179,50 @@ void ViewWidget::paintGL()
     m_matrices_UBO_p->bind_to(0);
     m_light_UBO_p->bind_to(1);
     m_cel_shading_p->bind_to(2);
+    m_clip_UBO_p->bind_to(3);
 
+    int old_FBO;
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &old_FBO);
+
+    // reflection FBO
+    m_reflection_FBO_p->bind_FBO_and_set_viewport(GL_DRAW_FRAMEBUFFER);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClipPlane(GL_CLIP_PLANE0, ABOVE_WATER_D);
+    m_clip_UBO_p->BufferData((void*)ABOVE_WATER);
+    // 將相機對稱水面
+    glm::vec3 delta(0, 2 * (m_arc_ball.center().y + 0.5), 0); // 水面在 y = -0.5
+    m_arc_ball.set_center(m_arc_ball.center() - delta);
+    m_arc_ball.set_beta(-m_arc_ball.beta());
+    this->update_view_from_arc_ball();
+    // draw
+    this->drawStuffs_without_water();
+    // 復原相機
+    m_arc_ball.set_center(m_arc_ball.center() + delta);
+    m_arc_ball.set_beta(-m_arc_ball.beta());
+    this->update_view_from_arc_ball();
+
+    // refraction FBO
+    m_refraction_FBO_p->bind_FBO_and_set_viewport(GL_DRAW_FRAMEBUFFER);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClipPlane(GL_CLIP_PLANE0, UNDER_WATER_D);
+    m_clip_UBO_p->BufferData((void*)UNDER_WATER);
+    this->drawStuffs_without_water();
+
+    // 繪製最終畫面 + 後處理
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, old_FBO);
+    glClipPlane(GL_CLIP_PLANE0, NO_CLIP_D);
+    m_clip_UBO_p->BufferData((void*)NO_CLIP);
     m_post_processor_p->prepare();
+    this->drawStuffs_without_water();
+    m_water_obj_p->draw(m_wireframe_mode, *m_reflection_FBO_p, *m_refraction_FBO_p);
+    m_post_processor_p->start_post_process();
+}
 
+void ViewWidget::drawStuffs_without_water()
+{
     m_skybox_obj_p->draw(m_wireframe_mode);
-    m_water_obj_p->draw(m_wireframe_mode);
     m_train_obj_p->draw(m_wireframe_mode);
     m_island_obj_p->draw(m_wireframe_mode);
-
-    m_post_processor_p->start_post_process();
 }
 
 // Mouse Event ////////////////////////////////////////////////////////////////////////
