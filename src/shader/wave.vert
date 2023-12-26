@@ -41,13 +41,14 @@ void main() {
     // changes over frames
     float offset = float(frame) / 20;
 
-    // y  = 0.05 * sin(2 * pi * x)
-    // y' = 0.05 * 2 * pi * cos(2 * pi * x)
-    vs_world_pos = vec3(pos.x, 0.05 * sin(2 * 3.14 * (pos.x + offset)), pos.z);
+    // y  = 0.03 * sin(2 * pi * x)
+    // y' = 0.03 * 2 * pi * cos(2 * pi * x)
+    vs_world_pos = vec3(pos.x, 0.03 * sin(2 * 3.14 * (pos.x + offset)), pos.z);
     vs_world_pos.y -= 0.5;
     gl_Position = Matrices.proj * Matrices.view * vec4(vs_world_pos, 1);
+    vs_clipspace = gl_Position;
 
-    float slope = 0.05 * 2 * 3.14 * cos(2 * 3.14 * (pos.x + offset));
+    float slope = 0.03 * 2 * 3.14 * cos(2 * 3.14 * (pos.x + offset));
     vs_normal = normalize(vec3(-slope, 1, 0));
   }
 }
