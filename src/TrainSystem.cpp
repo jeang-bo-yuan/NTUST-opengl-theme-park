@@ -14,11 +14,11 @@
 #include <ArcBall.h>
 
 /// Control Point的大小
-constexpr float CONTROL_POINT_SIZE = 0.1f;
+constexpr float CONTROL_POINT_SIZE = 0.2f;
 /// 大小的斜邊
 constexpr float HYPOT_CP_SIZE = 1.41421f /*sqrt(2)*/ * CONTROL_POINT_SIZE;
 
-constexpr float Track_Interval = 0.1f;
+constexpr float Track_Interval = 0.2f;
 constexpr float Param_Interval = 0.0625f;
 
 // Arc Len Accum ////////////////////////////////////////////////////////////////
