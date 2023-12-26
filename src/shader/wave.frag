@@ -1,5 +1,6 @@
 #version 430 core
 in vec3 vs_world_pos;
+in vec4 vs_clipspace;
 in vec3 vs_normal;
 
 layout (std140, binding = 1) uniform LightBlock {
@@ -21,17 +22,19 @@ void main() {
     FragColor = applyLight();
   }
   else {
-    vec2 TexCoord = clamp((vec2(vs_world_pos.x , vs_world_pos.z) + WAVE_SIZE) / (2.f * WAVE_SIZE), 0, 1);
-    vec4 reflect_color = texture(reflection_texture, TexCoord);
-    vec4 refract_color = texture(refraction_texture, TexCoord);
+    vec2 NDC = (vs_clipspace.xy / vs_clipspace.w) / 2.f + 0.5f;
+
+    vec4 reflect_color = texture(reflection_texture, vec2(NDC.x, 1 - NDC.y));
+    vec4 refract_color = texture(refraction_texture, NDC);
     FragColor = mix(reflect_color, refract_color, 0.5);
+    FragColor = applyLight();
   }
 
 }
 
 uniform vec4 color_ambient = vec4(0.1, 0.2, 0.5, 1.0);
-uniform vec4 color_diffuse = vec4(0.2, 0.3, 0.6, 1.0);
-uniform vec4 color_specular = vec4(0.2, 0.3, 0.6, 1.0);
+uniform vec4 color_diffuse = vec4(1, 1, 1, 1.0);
+uniform vec4 color_specular = vec4(1, 1, 1, 1.0);
 uniform float shininess = 77.0f;
 
 layout (std140, binding = 2) uniform Cel_Shading_Block {

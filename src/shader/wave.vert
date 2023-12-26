@@ -11,6 +11,7 @@ uniform float WAVE_SIZE;
 uniform bool use_height_map;
 
 out vec3 vs_world_pos;
+out vec4 vs_clipspace; // in clip coordinate
 out vec3 vs_normal;
 
 
@@ -22,6 +23,7 @@ void main() {
     vec4 info = texture2D(height_map, TexCoord);
     vs_world_pos = vec3(pos.x, (info.r * 0.5) - 0.5, pos.z);
     gl_Position = Matrices.proj * Matrices.view * vec4(vs_world_pos, 1);
+    vs_clipspace = gl_Position;
 
     float delta = 0.00005;
     // TexCoord上x加delta後，y的變化量
