@@ -12,6 +12,7 @@ private:
     Shader m_shader;
     Model m_model;
     Model m_tree_model;
+    Model m_house_model;
 
 public:
     Island();
