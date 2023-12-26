@@ -187,14 +187,14 @@ void ViewWidget::paintGL()
     // reflection FBO
     m_reflection_FBO_p->bind_FBO_and_set_viewport(GL_DRAW_FRAMEBUFFER);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClipPlane(GL_CLIP_PLANE0, ABOVE_WATER_D);
-    m_clip_UBO_p->BufferData((void*)ABOVE_WATER);
     // 將相機對稱水面
     glm::vec3 delta(0, 2 * (m_arc_ball.center().y + 0.5), 0); // 水面在 y = -0.5
     m_arc_ball.set_center(m_arc_ball.center() - delta);
     m_arc_ball.set_beta(-m_arc_ball.beta());
     this->update_view_from_arc_ball();
     // draw
+    glClipPlane(GL_CLIP_PLANE0, ABOVE_WATER_D);       // glClipPlane會將這平面轉成視空間的座標，所以要改完ModelView Matrix才能設定
+    m_clip_UBO_p->BufferData((void*)ABOVE_WATER);
     this->drawStuffs_without_water();
     // 復原相機
     m_arc_ball.set_center(m_arc_ball.center() + delta);
