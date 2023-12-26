@@ -29,7 +29,7 @@ public:
     /// Destructor
     ~Wave_VAO();
 
-    /// 在(-1, 0, -1) ~ (1, 0, 1)畫出一個由許多三角形構成的面，要搭配Shader轉成sine wave
+    /// 在(-size, 0, -size) ~ (size, 0, size)畫出一個由許多三角形構成的面，要搭配Shader轉成sine wave
     void draw() override;
 };
 
