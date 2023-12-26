@@ -37,8 +37,9 @@ void main() {
   vec3 eye = Light.eye_position.xyz - aTranslate;
 
   mat4 rotate;
-  float theta1 = atan(eye.y / abs(eye.x));
+  float theta1 = atan(eye.y / abs(eye.z));
   rotate = rotationX(-theta1);
+
   float theta2 = atan(eye.x, eye.z);
   rotate = rotationY(theta2) * rotate;
 
