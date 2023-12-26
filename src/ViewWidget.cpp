@@ -343,6 +343,13 @@ void ViewWidget::keyReleaseEvent(QKeyEvent *e)
 
 // Slots //////////////////////////////////////////////////////////////////////////////
 
+void ViewWidget::set_water_reflect_refract(Water::ReflectRefract type, float factor)
+{
+    this->makeCurrent();
+    m_water_obj_p->setReflectRefract(type, factor);
+    this->doneCurrent();
+}
+
 void ViewWidget::toggle_wireframe(bool on) {
     m_wireframe_mode = on;
 }

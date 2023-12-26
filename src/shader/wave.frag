@@ -7,7 +7,8 @@ layout (std140, binding = 1) uniform LightBlock {
   vec4 eye_position;
   vec4 light_position;
 } Light;
-uniform uint how_to_render = 1;
+uniform uint how_to_render = 0;
+uniform float factor;
 uniform float WAVE_SIZE;
 uniform sampler2D reflection_texture;
 uniform sampler2D refraction_texture;
@@ -26,7 +27,12 @@ void main() {
 
     vec4 reflect_color = texture(reflection_texture, vec2(NDC.x, 1 - NDC.y));
     vec4 refract_color = texture(refraction_texture, NDC);
-    FragColor = mix(reflect_color, refract_color, 0.5);
+    if (how_to_render == 1)
+      FragColor = mix(reflect_color, refract_color, factor);
+    else {
+      // TODO: Fresnel
+      FragColor = mix(reflect_color, refract_color, 0.5);
+    }
     FragColor = applyLight();
   }
 

@@ -13,6 +13,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->radioSineWave, &QRadioButton::clicked, ui->view, &ViewWidget::use_sine_wave);
     connect(ui->radioRipple, &QRadioButton::clicked, ui->view, &ViewWidget::use_ripple);
     connect(ui->radioHeightMap, &QRadioButton::clicked, ui->view, &ViewWidget::use_height_map);
+    connect(ui->radioNoReflectRefract, &QRadioButton::clicked, ui->view, [this]() {
+        ui->view->set_water_reflect_refract(Water::ReflectRefract::NO);
+    });
+    connect(ui->radioCustomFactor, &QRadioButton::clicked, ui->view, [this]() {
+        ui->view->set_water_reflect_refract(Water::ReflectRefract::CUSTOM_FACTOR, ui->spinFactor->value());
+    });
+    connect(ui->spinFactor, QOverload<double>::of(&QDoubleSpinBox::valueChanged), ui->view, [this]() {
+        ui->view->set_water_reflect_refract(Water::ReflectRefract::CUSTOM_FACTOR, ui->spinFactor->value());
+    });
+    connect(ui->radioFresnel, &QRadioButton::clicked, ui->view, [this]() {
+        ui->view->set_water_reflect_refract(Water::ReflectRefract::FRESNEL);
+    });
 
     // Train
     ui->buttonDeleteCP->setDisabled(true);

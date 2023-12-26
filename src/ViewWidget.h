@@ -149,6 +149,8 @@ public slots:
 
     void use_height_map() { m_water_obj_p->use_height_map(); }
 
+    void set_water_reflect_refract(Water::ReflectRefract type, float factor = 0.f);
+
     /// 替火車新增一個control point
     void add_train_CP() { m_train_obj_p->add_CP(); }
     /// 刪掉火車的一個control point

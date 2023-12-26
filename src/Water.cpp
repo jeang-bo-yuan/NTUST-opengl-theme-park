@@ -81,3 +81,11 @@ bool Water::process_click(glm::vec3 world_pos)
     return false;
 }
 
+void Water::setReflectRefract(ReflectRefract type, float factor)
+{
+    m_water_shader.Use();
+    glUniform1ui(glGetUniformLocation(m_water_shader.Program, "how_to_render"), (int)type);
+    glUniform1f(glGetUniformLocation(m_water_shader.Program, "factor"), factor);
+    glUseProgram(0);
+}
+
