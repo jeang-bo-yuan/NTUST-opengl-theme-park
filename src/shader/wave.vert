@@ -14,6 +14,7 @@ out vec3 vs_world_pos;
 out vec4 vs_clipspace; // in clip coordinate
 out vec3 vs_normal;
 
+const float move_down = 0.3;
 
 void main() {
   gl_ClipDistance[0] = 0;
@@ -22,7 +23,7 @@ void main() {
     float scale = 0.02;
 
     vec4 info = texture2D(height_map, TexCoord);
-    vs_world_pos = vec3(pos.x, (info.r * scale) - 0.5, pos.z);
+    vs_world_pos = vec3(pos.x, (info.r * scale) - move_down, pos.z);
     gl_Position = Matrices.proj * Matrices.view * vec4(vs_world_pos, 1);
     vs_clipspace = gl_Position;
 
@@ -45,7 +46,7 @@ void main() {
     // y  = 0.03 * sin(2 * pi * x)
     // y' = 0.03 * 2 * pi * cos(2 * pi * x)
     vs_world_pos = vec3(pos.x, 0.03 * sin(2 * 3.14 * (pos.x + offset)), pos.z);
-    vs_world_pos.y -= 0.5;
+    vs_world_pos.y -= move_down;
     gl_Position = Matrices.proj * Matrices.view * vec4(vs_world_pos, 1);
     vs_clipspace = gl_Position;
 

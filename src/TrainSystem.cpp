@@ -205,10 +205,10 @@ void TrainSystem::delete_CP()
 
 void TrainSystem::reset_CP()
 {
-    m_control_points.assign({{glm::vec3(2, 1, 0), glm::vec3(0, 1, 0)},
-                             {glm::vec3(0, 1, 2), glm::vec3(0, 1, 0)},
-                             {glm::vec3(-2, 1, 0), glm::vec3(0, 1, 0)},
-                             {glm::vec3(0, 1, -2), glm::vec3(0, 1, 0)}});
+    m_control_points.assign({{glm::vec3(2, 0, 0), glm::vec3(0, 1, 0)},
+                             {glm::vec3(0, 0, 2), glm::vec3(0, 1, 0)},
+                             {glm::vec3(-2, 0, 0), glm::vec3(0, 1, 0)},
+                             {glm::vec3(0, 0, -2), glm::vec3(0, 1, 0)}});
 
     m_please_update_arc_len_accum = true;
 }
