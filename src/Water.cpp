@@ -4,15 +4,17 @@
 #include <glm/vec2.hpp>
 #include <iostream>
 
+constexpr float WAVE_SIZE = 6.f;
+
 Water::Water()
-    : m_water_shader("shader/wave.vert", nullptr, nullptr, nullptr, "shader/wave.frag"), m_water_vao(5), m_frame(0), m_height_maps(),
+    : m_water_shader("shader/wave.vert", nullptr, nullptr, nullptr, "shader/wave.frag"), m_water_vao(WAVE_SIZE), m_frame(0), m_height_maps(),
     m_current_height_map(0), m_state(SINE_WAVE)
 {
     m_water_shader.Use();
     glUniform1i(glGetUniformLocation(m_water_shader.Program, "height_map"), 0);
     glUniform1i(glGetUniformLocation(m_water_shader.Program, "reflection_texture"), 1);
     glUniform1i(glGetUniformLocation(m_water_shader.Program, "refraction_texture"), 2);
-    glUniform1f(glGetUniformLocation(m_water_shader.Program, "WAVE_SIZE"), 5.f);
+    glUniform1f(glGetUniformLocation(m_water_shader.Program, "WAVE_SIZE"), WAVE_SIZE);
     glUniform1i(glGetUniformLocation(m_water_shader.Program, "use_height_map"), false);
 
     // 載入200張height map
@@ -69,9 +71,9 @@ void Water::draw(bool wireframe, FBO &reflection, FBO &refraction)
 bool Water::process_click(glm::vec3 world_pos)
 {
     if (m_state == RIPPLE)
-    if (abs(world_pos.x) <= 5 && abs(world_pos.z) <= 5 && abs(world_pos.y) <= 1) {
+    if (abs(world_pos.x) <= WAVE_SIZE && abs(world_pos.z) <= WAVE_SIZE && abs(world_pos.y) <= 1) {
         glm::vec2 tex(world_pos.x, world_pos.z);
-        tex = (tex + 5.f) / 10.f;
+        tex = (tex + WAVE_SIZE) / (2.f * WAVE_SIZE);
 
         m_ripple_map.add_drop(tex.x, tex.y);
 
