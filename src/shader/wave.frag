@@ -27,11 +27,13 @@ void main() {
 
     vec4 reflect_color = texture(reflection_texture, vec2(NDC.x, 1 - NDC.y));
     vec4 refract_color = texture(refraction_texture, NDC);
-    if (how_to_render == 1)
+    if (how_to_render == 1) {
       FragColor = mix(reflect_color, refract_color, factor);
-    else {
+    } else if (how_to_render == 2){
       // TODO: Fresnel
-      FragColor = mix(reflect_color, refract_color, 0.5);
+      vec3 eye_dir = normalize(Light.eye_position.xyz - vs_world_pos);
+      float the_factor = (dot(eye_dir, vec3(0, 1, 0)));
+      FragColor = mix(reflect_color, refract_color, pow(the_factor, 2));
     }
     FragColor = applyLight();
   }
